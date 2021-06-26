@@ -63,6 +63,7 @@ jupyter_nbextensions_configurator
 matplotlib
 numpy
 
+click
 
 # ------------
 # Custom Repo
