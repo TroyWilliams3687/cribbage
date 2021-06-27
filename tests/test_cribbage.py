@@ -316,19 +316,78 @@ def test_hand_sorted(data):
 # -------------
 # Test Hand - combinations
 
-# data = [
-#     (('TC', 'AS', '3H'), ()),
-#     (('9C', 'AS', '3D'), ('AS', '3D', '9C') ),
-#     (('9C', 'AS', '3D', 'Ac', 'ah'), ('AS', 'AC', 'AH', '3D', '9C')),
-# ]
 
-# @pytest.mark.parametrize('data', data)
-# def test_hand_combinations(data):
+left = ('TC', 'AS', '3H')
+right = (
+    [],
+    [Card(rank='T', suit='C')],
+    [Card(rank='A', suit='S')],
+    [Card(rank='3', suit='H')],
+    [Card(rank='T', suit='C'), Card(rank='A', suit='S')],
+    [Card(rank='T', suit='C'), Card(rank='3', suit='H')],
+    [Card(rank='A', suit='S'), Card(rank='3', suit='H')],
+    [Card(rank='T', suit='C'), Card(rank='A', suit='S'), Card(rank='3', suit='H')]
+)
 
-#     left, right = data
+data = [(left, right)]
 
-#     cards = Hand([Card(*c) for c in left])
+left = ('TC', 'AS', '3H', 'QD')
+right = (
+    [],
+    [Card(rank='T', suit='C')],
+    [Card(rank='A', suit='S')],
+    [Card(rank='3', suit='H')],
+    [Card(rank='Q', suit='D')],
+    [Card(rank='T', suit='C'), Card(rank='A', suit='S')],
+    [Card(rank='T', suit='C'), Card(rank='3', suit='H')],
+    [Card(rank='T', suit='C'), Card(rank='Q', suit='D')],
+    [Card(rank='A', suit='S'), Card(rank='3', suit='H')],
+    [Card(rank='A', suit='S'), Card(rank='Q', suit='D')],
+    [Card(rank='3', suit='H'), Card(rank='Q', suit='D')],
+    [Card(rank='T', suit='C'), Card(rank='A', suit='S'), Card(rank='3', suit='H')],
+    [Card(rank='T', suit='C'), Card(rank='A', suit='S'), Card(rank='Q', suit='D')],
+    [Card(rank='T', suit='C'), Card(rank='3', suit='H'), Card(rank='Q', suit='D')],
+    [Card(rank='A', suit='S'), Card(rank='3', suit='H'), Card(rank='Q', suit='D')],
+    [Card(rank='T', suit='C'), Card(rank='A', suit='S'), Card(rank='3', suit='H'), Card(rank='Q', suit='D')],
+)
 
-#     assert cards.every_combination() == right
+data.append((left, right))
+
+@pytest.mark.parametrize('data', data)
+def test_hand_combinations(data):
+
+    left, right = data
+
+    cards = Hand([Card(*c) for c in left])
+
+    combo = [c for c in cards.every_combination()]
+
+    assert len(combo) == len(right)
+
+    assert all(a == b for a,b in zip(combo, right))
 
 
+left = ('TC', 'AS', '3H')
+right = (
+    [Card(rank='T', suit='C'), Card(rank='A', suit='S')],
+    [Card(rank='T', suit='C'), Card(rank='3', suit='H')],
+    [Card(rank='A', suit='S'), Card(rank='3', suit='H')]
+)
+
+data = [(left, right)]
+
+@pytest.mark.parametrize('data', data)
+def test_hand_combinations2(data):
+
+    left, right = data
+
+    cards = Hand([Card(*c) for c in left])
+
+    combo = [c for c in cards.every_combination(count=2)]
+
+    assert len(combo) == len(right)
+    assert all(a == b for a,b in zip(combo, right))
+
+
+# -------------
+# Test find_fifteens

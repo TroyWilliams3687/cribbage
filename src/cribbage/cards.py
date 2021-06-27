@@ -251,8 +251,9 @@ class Hand(MutableSequence):
 
     def __init__(self, *args):
 
-        if len(set(*args)) != len(*args):
-            raise ValueError('Duplicate cards are not allowed!')
+        if len(args) > 0:
+            if len(set(*args)) != len(*args):
+                raise ValueError('Duplicate cards are not allowed!')
 
         self.values = list(*args)
 
