@@ -312,3 +312,23 @@ def test_hand_sorted(data):
 
     assert len(items) == len(right)
     assert all([a == b for a, b in zip(items, right)])
+
+# -------------
+# Test Hand - combinations
+
+# data = [
+#     (('TC', 'AS', '3H'), ()),
+#     (('9C', 'AS', '3D'), ('AS', '3D', '9C') ),
+#     (('9C', 'AS', '3D', 'Ac', 'ah'), ('AS', 'AC', 'AH', '3D', '9C')),
+# ]
+
+# @pytest.mark.parametrize('data', data)
+# def test_hand_combinations(data):
+
+#     left, right = data
+
+#     cards = Hand([Card(*c) for c in left])
+
+#     assert cards.every_combination() == right
+
+
