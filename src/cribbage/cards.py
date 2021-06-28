@@ -238,170 +238,321 @@ def make_deck():
     return [Card(*p) for p in product(ranks, suits)]
 
 
-class Hand(MutableSequence):
+# class Hand(MutableSequence):
+#     """
+#     A hand is a simple container for a number of cards.
+
+
+#     https://docs.python.org/3/reference/datamodel.html
+#     https://docs.python.org/3/library/collections.abc.html
+#     https://treyhunner.com/2019/04/why-you-shouldnt-inherit-from-list-and-dict-in-python/
+
+#     """
+
+#     def __init__(self, *args):
+
+#         if len(args) > 0:
+#             if len(set(*args)) != len(*args):
+#                 raise ValueError('Duplicate cards are not allowed!')
+
+#         self.values = list(*args)
+
+#         # list.__init__(self, *args)
+
+#     def __getitem__(self, key):
+#         return self.values[key]
+
+#     def __setitem__(self, key, value):
+#         self.values[key] = value
+
+#     def __delitem__(self, key):
+#         del self.values[key]
+
+#     def __len__(self):
+#         return len(self.values)
+
+#     def __eq__(self, other):
+#         return self.values == other
+
+#     def __str__(self):
+#         return self.values.__str__()
+
+#     def __repr__(self):
+#         return self.values.__repr__()
+
+#     def insert(self, key, value):
+#         self.insert(key, value)
+
+#     def display(self):
+#         """
+
+#         Return a list of strings representing the cards in the hand.
+
+#         [AD, 1D, 3S, 4C]
+
+#         """
+
+#         return [str(c) for c in self]
+
+#     def cool_display(self):
+#         """
+#         Return a list of strings representing the cards in the hand
+#         using unicode characters to represent the suits.
+
+#         [A♦, 1♦, 3♠, 4♣]
+#         """
+#         return [c.cool_display() for c in self]
+
+#     def value(self):
+#         """
+
+#         Return the total value of the hand summing each individual card
+#         value.
+
+#         # NOTE
+
+#         If the hand is empty, by default the sum function returns 0.
+
+#         """
+
+#         return sum([c.value() for c in self])
+
+#     def sort(self, key=None, reverse=False):
+#         """
+#         Return a new Hand list in sorted order.
+
+#         The new order will account for the rank of the card.
+
+#         Given:
+
+#         [AD, 4D, 6S, 4C]
+
+#         Returns:
+
+#         [AD, 4C, 4D, 6S]
+
+#         # NOTE
+
+#         It may be more preferable to sort from lowest to highest and
+#         group-by suit. That is make sure that all diamonds are
+#         consecutive.
+
+#         """
+
+#         self.values.sort(key=key, reverse=reverse)
+
+#     def every_combination(self, **kwargs):
+#         """
+
+#         Iterate through every combination of cards from 0 to len
+#         (self) yielding the result as it is created.
+
+#         This is a generator method. It will iterate through all the single
+#         cards, than pairs than triples etc.
+
+#         Optionally, you can specify a `count` and limit the return
+#         values to hands of that length. For example if count=2, then
+#         all 2 card combinations are returned.
+
+#         # Parameters (kwargs)
+
+#         count:int
+#             - The number of cards to take.
+
+#         # Return
+
+#         A Hand containing the cards in the combination.
+
+#         """
+
+#         if 'count' in kwargs:
+#             # From this hand, generate a list of all hands of length
+#             # count
+
+#             # If count = 2 and m = [x,y,z,w]
+
+#             # >>>from itertools import combinations
+#             # >>> m = ['x', 'y', 'z', 'w']
+#             # >>> [c for c in combinations(m,2)]
+#             # [('x', 'y'), ('x', 'z'), ('x', 'w'),
+#             #  ('y', 'z'), ('y', 'w'), ('z', 'w')]
+
+#             for combo in combinations(self, kwargs['count']):
+#                 yield Hand(combo)
+
+#         else:
+
+#             # Generate all possible combinations of Hands from 0 to n
+
+#             # if the hand count is 4, it will generate 16 hands.
+
+#             # >>> from itertools import chain
+#             # >>> from itertools import combinations
+#             # >>> m = ['x', 'y', 'z', 'w']
+#             # >>> [r for r in range(len(m) + 1)]
+#             # [0, 1, 2, 3, 4]
+#             # >>> [c for c in chain.from_iterable(
+#             #   combinations(m, r) for r in range(len(m) + 1))]
+#             # [(), ('x',), ('y',), ('z',), ('w',), ('x', 'y'),
+#             #  ('x', 'z'), ('x', 'w'), ('y', 'z'), ('y', 'w'), ('z', 'w'),
+#             #  ('x', 'y', 'z'), ('x', 'y', 'w'), ('x', 'z', 'w'),
+#             #  ('y', 'z', 'w'), ('x', 'y', 'z', 'w')]
+
+#             for combo in chain.from_iterable(
+#                 combinations(self, r) for r in range(len(self) + 1)
+#             ):
+#                 yield Hand(combo)
+
+
+
+# def hand_duplicates(hand):
+#     """
+#     """
+
+#     if len(set(hand)) != len(hand):
+#         raise ValueError('Duplicate cards are not allowed!')
+
+
+def display_hand(hand, cool=False):
     """
-    A hand is a simple container for a number of cards.
+    Given a list of Cards, return a list of strings representing the
+    rank and suit of each card.
 
+    # Parameters
 
-    https://docs.python.org/3/reference/datamodel.html
-    https://docs.python.org/3/library/collections.abc.html
-    https://treyhunner.com/2019/04/why-you-shouldnt-inherit-from-list-and-dict-in-python/
+    hand:list(Card)
+        - The list of cards to convert to a string representation
+
+    cool:bool
+        - If this option is turned on, the suit will be converted to a
+          unicode representation.
+        - Default - False
+
+    # Return
+
+    A list of strings representing the cards.
+
 
     """
 
-    def __init__(self, *args):
+    if cool:
+        return [card.cool_display() for card in hand]
 
-        if len(args) > 0:
-            if len(set(*args)) != len(*args):
-                raise ValueError('Duplicate cards are not allowed!')
+    else:
+        return [str(card) for card in hand]
 
-        self.values = list(*args)
 
-        # list.__init__(self, *args)
+def count_hand(hand):
+    """
 
-    def __getitem__(self, key):
-        return self.values[key]
+    Given the list of cards, return the total count based on the face
+    value of the cards.
 
-    def __setitem__(self, key, value):
-        self.values[key] = value
+    # Parameters
 
-    def __delitem__(self, key):
-        del self.values[key]
+    hand:list(Card)
+        - The list of cards to convert to a string representation
 
-    def __len__(self):
-        return len(self.values)
+    # Return
 
-    def __eq__(self, other):
-        return self.values == other
+    An integer representing the total face value of the cards in the
+    hand.
 
-    def __str__(self):
-        return self.values.__str__()
+    # NOTE
 
-    def __repr__(self):
-        return self.values.__repr__()
+    If the hand is empty, by default the sum function returns 0.
 
-    def insert(self, key, value):
-        self.insert(key, value)
+    """
 
-    def display(self):
-        """
+    return sum([card.value() for card in hand])
 
-        Return a list of strings representing the cards in the hand.
 
-        [AD, 1D, 3S, 4C]
+def hand_combinations(hand, combination_length=None):
+    """
+    Given a hand, iterate through every combination of that hand at
+    every hand length from 0, to the number of cards within the hand.
 
-        """
+    >>> from itertools import chain
+    >>> from itertools import combinations
+    >>> m = ['x', 'y', 'z', 'w']
+    >>> [r for r in range(len(m) + 1)]
+    [0, 1, 2, 3, 4]
+    >>> [c for c in chain.from_iterable(
+      combinations(m, r) for r in range(len(m) + 1))]
+    [(), ('x',), ('y',), ('z',), ('w',), ('x', 'y'),
+     ('x', 'z'), ('x', 'w'), ('y', 'z'), ('y', 'w'), ('z', 'w'),
+     ('x', 'y', 'z'), ('x', 'y', 'w'), ('x', 'z', 'w'),
+     ('y', 'z', 'w'), ('x', 'y', 'z', 'w')]
 
-        return [str(c) for c in self]
 
-    def cool_display(self):
-        """
-        Return a list of strings representing the cards in the hand
-        using unicode characters to represent the suits.
+    Iterate through every combination of cards from 0 to len
+    (self) yielding the result as it is created.
 
-        [A♦, 1♦, 3♠, 4♣]
-        """
-        return [c.cool_display() for c in self]
+    This is a generator method. It will iterate through all the single
+    cards, than pairs than triples etc.
 
-    def value(self):
-        """
+    Optionally, you can specify a `count` and limit the return
+    values to hands of that length. For example if count=2, then
+    all 2 card combinations are returned.
 
-        Return the total value of the hand summing each individual card
-        value.
+    # Parameters (kwargs)
 
-        # NOTE
+    count:int
+        - The number of cards to take.
 
-        If the hand is empty, by default the sum function returns 0.
+    # Return
 
-        """
+    A list containing the cards in the combination.
 
-        return sum([c.value() for c in self])
+    """
 
-    def sort(self, key=None, reverse=False):
-        """
-        Return a new Hand list in sorted order.
+    if combination_length:
 
-        The new order will account for the rank of the card.
+        # From this hand, generate a list of all hands of length
+        # count
 
-        Given:
+        # If count = 2 and m = [x,y,z,w]
 
-        [AD, 4D, 6S, 4C]
+        # >>>from itertools import combinations
+        # >>> m = ['x', 'y', 'z', 'w']
+        # >>> [c for c in combinations(m,2)]
+        # [('x', 'y'), ('x', 'z'), ('x', 'w'),
+        #  ('y', 'z'), ('y', 'w'), ('z', 'w')]
 
-        Returns:
+        for combo in combinations(hand, combination_length):
+            yield combo
 
-        [AD, 4C, 4D, 6S]
+    else:
+        # Generate all possible combinations of Hands from 0 to n
 
-        # NOTE
+        # if the hand count is 4, it will generate 16 hands.
 
-        It may be more preferable to sort from lowest to highest and
-        group-by suit. That is make sure that all diamonds are
-        consecutive.
+        # >>> from itertools import chain
+        # >>> from itertools import combinations
+        # >>> m = ['x', 'y', 'z', 'w']
+        # >>> [r for r in range(len(m) + 1)]
+        # [0, 1, 2, 3, 4]
+        # >>> [c for c in chain.from_iterable(
+        #   combinations(m, r) for r in range(len(m) + 1))]
+        # [(), ('x',), ('y',), ('z',), ('w',), ('x', 'y'),
+        #  ('x', 'z'), ('x', 'w'), ('y', 'z'), ('y', 'w'), ('z', 'w'),
+        #  ('x', 'y', 'z'), ('x', 'y', 'w'), ('x', 'z', 'w'),
+        #  ('y', 'z', 'w'), ('x', 'y', 'z', 'w')]
 
-        """
+        for combo in chain.from_iterable(
+            combinations(hand, r) for r in range(len(hand) + 1)
+        ):
+            yield combo
 
-        self.values.sort(key=key, reverse=reverse)
 
-    def every_combination(self, **kwargs):
-        """
 
-        Iterate through every combination of cards from 0 to len
-        (self) yielding the result as it is created.
 
-        This is a generator method. It will iterate through all the single
-        cards, than pairs than triples etc.
 
-        Optionally, you can specify a `count` and limit the return
-        values to hands of that length. For example if count=2, then
-        all 2 card combinations are returned.
 
-        # Parameters (kwargs)
 
-        count:int
-            - The number of cards to take.
 
-        # Return
 
-        A Hand containing the cards in the combination.
 
-        """
-
-        if 'count' in kwargs:
-            # From this hand, generate a list of all hands of length
-            # count
-
-            # If count = 2 and m = [x,y,z,w]
-
-            # >>>from itertools import combinations
-            # >>> m = ['x', 'y', 'z', 'w']
-            # >>> [c for c in combinations(m,2)]
-            # [('x', 'y'), ('x', 'z'), ('x', 'w'),
-            #  ('y', 'z'), ('y', 'w'), ('z', 'w')]
-
-            for combo in combinations(self, kwargs['count']):
-                yield Hand(combo)
-
-        else:
-
-            # Generate all possible combinations of Hands from 0 to n
-
-            # if the hand count is 4, it will generate 16 hands.
-
-            # >>> from itertools import chain
-            # >>> from itertools import combinations
-            # >>> m = ['x', 'y', 'z', 'w']
-            # >>> [r for r in range(len(m) + 1)]
-            # [0, 1, 2, 3, 4]
-            # >>> [c for c in chain.from_iterable(
-            #   combinations(m, r) for r in range(len(m) + 1))]
-            # [(), ('x',), ('y',), ('z',), ('w',), ('x', 'y'),
-            #  ('x', 'z'), ('x', 'w'), ('y', 'z'), ('y', 'w'), ('z', 'w'),
-            #  ('x', 'y', 'z'), ('x', 'y', 'w'), ('x', 'z', 'w'),
-            #  ('y', 'z', 'w'), ('x', 'y', 'z', 'w')]
-
-            for combo in chain.from_iterable(
-                combinations(self, r) for r in range(len(self) + 1)
-            ):
-                yield Hand(combo)
 
 
 def deal_hand(deck, count):

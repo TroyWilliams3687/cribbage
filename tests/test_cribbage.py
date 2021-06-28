@@ -30,7 +30,9 @@ import pytest
 from cribbage.cards import (
     Card,
     make_deck,
-    Hand,
+    display_hand,
+    count_hand,
+    hand_combinations,
 )
 
 # -------------
@@ -204,41 +206,7 @@ def test_card_sort():
 
 
 # -------------
-# Test Hand - Init
-
-
-data = [
-    (('TC', 'AS', '3H'), Hand([Card(*'TC'), Card(*'AS'), Card(*'3H')])),
-    (('9C', 'AS', '3D'), Hand([Card(*'9C'), Card(*'AS'), Card(*'3D')])),
-    (('9C', 'AS', '3D', 'Ac', 'ah'), Hand([Card(*'9C'), Card(*'AS'), Card(*'3D'), Card(*'AC'), Card(*'AH')])),
-]
-
-@pytest.mark.parametrize('data', data)
-def test_hand_init(data):
-
-    left, right = data
-
-    cards = Hand([Card(*c) for c in left])
-
-    assert cards == right
-
-# -------------
-# Test Hand - Init - Exception - Duplicates
-
-data = [
-    ('TC', 'AS', '3H', 'tc'),
-    ('9C', 'AS', 'as', '3D'),
-    ('9C', 'AS', '3D',  '3D', 'Ac', 'ah'),
-]
-
-@pytest.mark.parametrize('data', data)
-def test_card_exception(data):
-
-    with pytest.raises(ValueError):
-        cards = Hand([Card(*c) for c in data])
-
-# -------------
-# Test Hand - Display
+# Test display_hand
 
 data = [
     (('TC', 'AS', '3H'), ('TC', 'AS', '3H') ),
@@ -251,10 +219,9 @@ def test_hand_display(data):
 
     left, right = data
 
-    cards = Hand([Card(*c) for c in left])
+    cards = [Card(*c) for c in left]
 
-
-    items = cards.display()
+    items = display_hand(cards)
 
     # writing the test like this because we don't care (at this point)
     # if it is a list or tuple, just that the elements are the same and
@@ -266,7 +233,7 @@ def test_hand_display(data):
 
 
 # -------------
-# Test Hand - Value
+# Test count_hand
 
 data = [
     (('TC', 'AS', '3H'),  14),
@@ -279,7 +246,7 @@ def test_hand_value(data):
 
     left, right = data
 
-    assert Hand([Card(*c) for c in left]).value() == right
+    assert count_hand([Card(*c) for c in left]) == right
 
 
 # -------------
@@ -296,25 +263,23 @@ def test_hand_sorted(data):
 
     left, right = data
 
-    cards = Hand([Card(*c) for c in left])
-
-    assert isinstance(cards, Hand)
+    cards = [Card(*c) for c in left]
 
     # Create a new sorted list
-    items = Hand(sorted(cards)).display()
+    items = display_hand(sorted(cards))
 
     assert len(items) == len(right)
     assert all([a == b for a, b in zip(items, right)])
 
     # Sort the Cards inline
     cards.sort()
-    items = cards.display()
+    items = display_hand(cards)
 
     assert len(items) == len(right)
     assert all([a == b for a, b in zip(items, right)])
 
 # -------------
-# Test Hand - combinations
+# Test hand_combinations
 
 
 left = ('TC', 'AS', '3H')
@@ -358,20 +323,20 @@ def test_hand_combinations(data):
 
     left, right = data
 
-    cards = Hand([Card(*c) for c in left])
+    cards = [Card(*c) for c in left]
 
-    combo = [c for c in cards.every_combination()]
+    combo = [c for c in hand_combinations(cards)]
 
     assert len(combo) == len(right)
 
-    assert all(a == b for a,b in zip(combo, right))
-
+    for a, b in zip(combo, right):
+        assert all(u == v for u, v in zip(a,b))
 
 left = ('TC', 'AS', '3H')
 right = (
-    [Card(rank='T', suit='C'), Card(rank='A', suit='S')],
-    [Card(rank='T', suit='C'), Card(rank='3', suit='H')],
-    [Card(rank='A', suit='S'), Card(rank='3', suit='H')]
+    (Card(rank='T', suit='C'), Card(rank='A', suit='S')),
+    (Card(rank='T', suit='C'), Card(rank='3', suit='H')),
+    (Card(rank='A', suit='S'), Card(rank='3', suit='H')),
 )
 
 data = [(left, right)]
@@ -381,13 +346,14 @@ def test_hand_combinations2(data):
 
     left, right = data
 
-    cards = Hand([Card(*c) for c in left])
+    cards = [Card(*c) for c in left]
 
-    combo = [c for c in cards.every_combination(count=2)]
+    combo = [c for c in hand_combinations(cards, combination_length=2)]
 
     assert len(combo) == len(right)
-    assert all(a == b for a,b in zip(combo, right))
 
+    for a, b in zip(combo, right):
+        assert all(u == v for u, v in zip(a,b))
 
 # -------------
 # Test find_fifteens
