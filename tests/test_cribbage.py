@@ -136,6 +136,26 @@ def test_card_cool(data):
     assert c.cool_display() == right
 
 
+data = [
+    ('8D', '🃈'),
+    ('9H', '🂹'),
+    ('TH', '🂺'),
+    ('AS', '🂡'),
+    ('KC', '🃞'),
+    ('JD', '🃋'),
+    ('QS', '🂭'),
+    ('2C', '🃒'),
+]
+
+@pytest.mark.parametrize('data', data)
+def test_card_cool2(data):
+
+    left, right = data
+
+    c = Card(*left)
+
+    assert c.cool_display(display_card=True) == right
+
 # -------------
 # Test Card - add
 
