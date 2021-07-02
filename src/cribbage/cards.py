@@ -958,7 +958,7 @@ def find_combinations(hand, cut):
 
     """
 
-    full_hand = Hand(hand + [cut])
+    full_hand = hand + [cut]
 
     return {
         "fifteen": list(find_fifteens(full_hand)),

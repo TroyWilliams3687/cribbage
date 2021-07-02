@@ -37,6 +37,7 @@ from cribbage.cards import (
     find_pairs,
     find_runs,
     find_flushes,
+    find_combinations,
 )
 
 # -------------
@@ -530,32 +531,50 @@ def test_find_flushes(data):
 # Test find_combinations
 
 
-# left = (("2C", "3C", "4C", "8C"), ('QS'))
-# right = ()
+left = (("4C", "5C", "6D", "5S"), ('QS')) # 16 point hand
+right = {
+    'fifteen': [
+        (Card(rank='5', suit='C'), Card(rank='Q', suit='S')),
+        (Card(rank='5', suit='S'), Card(rank='Q', suit='S')),
+        (Card(rank='4', suit='C'), Card(rank='5', suit='C'), Card(rank='6', suit='D')),
+        (Card(rank='4', suit='C'), Card(rank='6', suit='D'), Card(rank='5', suit='S'))
+    ],
+    'pair': [
+        (Card(rank='5', suit='C'), Card(rank='5', suit='S'))
+    ],
+    'run': [
+        [Card(rank='4', suit='C'), Card(rank='5', suit='C'), Card(rank='6', suit='D')],
+        [Card(rank='4', suit='C'), Card(rank='5', suit='S'), Card(rank='6', suit='D')]
+    ],
+    'flush': [],
+    'nobs': [],
+    'nibs': []
+}
 
-# data = [(left, right)]
+data = [(left, right)]
 
+left = (("3C", "2S", "6D", "8H"), ('3S')) # 2 point hand
+right = {
+    'fifteen': [],
+    'pair': [
+        (Card(rank='3', suit='C'), Card(rank='3', suit='S'))
+    ],
+    'run': [],
+    'flush': [],
+    'nobs': [],
+    'nibs': []
+}
 
-# @pytest.mark.parametrize("data", data)
-# def test_find_combinations(data):
+data.append((left,right))
 
-#     left, right = data
+@pytest.mark.parametrize("data", data)
+def test_find_combinations(data):
 
-#     hand_left, cut_left = left
+    left, right = data
 
-#     cards = [Card(*c) for c in hand_left]
-#     results = [c for c in find_combinations(cards, Card(*cut_left))]
+    hand_left, cut_left = left
 
+    cards = [Card(*c) for c in hand_left]
+    results = find_combinations(cards, Card(*cut_left))
 
-
-    # hand_right, cut_right = right
-
-    # assert len(hand) == len(hand_right)
-
-    # if cut is None:
-    #     assert cut == cut_right
-
-    # else:
-    #     assert str(cut) == cut_right
-
-    # assert all(str(u) == v for u, v in zip(hand, hand_right))
+    assert results == right
