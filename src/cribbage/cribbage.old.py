@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 """
 Classes and methods for using in cribbage analysis
@@ -10,12 +10,12 @@ License: The MIT License (http://www.opensource.org/licenses/mit-license.php)
 """
 
 # Constants
-__uuid__ = ''
-__author__ = 'Troy Williams'
-__email__ = 'troy.williams@bluebill.net'
-__copyright__ = 'Copyright (c) 2017, Troy Williams'
-__date__ = '2018-02-18'
-__maintainer__ = 'Troy Williams'
+__uuid__ = ""
+__author__ = "Troy Williams"
+__email__ = "troy.williams@bluebill.net"
+__copyright__ = "Copyright (c) 2017, Troy Williams"
+__date__ = "2018-02-18"
+__maintainer__ = "Troy Williams"
 
 
 # import random
@@ -24,10 +24,10 @@ from itertools import groupby
 
 
 # Shared tuple that stores the card ranks
-ranks = ('A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K')
+ranks = ("A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K")
 
 # shared tuple that stores the card suits
-suits = ('D', 'H', 'C', 'S')
+suits = ("D", "H", "C", "S")
 
 
 class Card(object):
@@ -36,9 +36,9 @@ class Card(object):
     Value is an integer rank, suit and display are strings.
     """
 
-# code for the class was inspired from:
-# https://github.com/CJOlsen/Cribbage-Helper/blob/master/cribbage.py
-# I have made some heavy modifications to the basic program
+    # code for the class was inspired from:
+    # https://github.com/CJOlsen/Cribbage-Helper/blob/master/cribbage.py
+    # I have made some heavy modifications to the basic program
 
     def __init__(self, rank=None, suit=None):
         """
@@ -74,19 +74,19 @@ class Card(object):
                 suit = r
 
             else:
-                raise ValueError('Rank and/or suit do not match!')
+                raise ValueError("Rank and/or suit do not match!")
 
         else:
-            raise ValueError('Rank and suit not properly set!')
+            raise ValueError("Rank and suit not properly set!")
 
         # at this point the rank and suit should be sorted
         self.rank = rank
         self.suit = suit
 
-        if rank == 'A':
+        if rank == "A":
             self.value = 1
 
-        elif rank in ('T', 'J', 'Q', 'K'):
+        elif rank in ("T", "J", "Q", "K"):
             self.value = 10
 
         else:
@@ -94,10 +94,7 @@ class Card(object):
 
         self.display = rank + suit
 
-        suit_symbols = {'H': u'\u2665',
-                        'D': u'\u2666',
-                        'S': u'\u2660',
-                        'C': u'\u2663'}
+        suit_symbols = {"H": u"\u2665", "D": u"\u2666", "S": u"\u2660", "C": u"\u2663"}
 
         # TBW 2016-07-20
         # display the card with the rank and a graphical symbol
@@ -105,19 +102,21 @@ class Card(object):
         self.cool_display = rank + suit_symbols[suit]
 
         # set the cards sorting order - useful for sorting a list of cards.
-        rank_sort_order_map = {'A': 1,
-                               '2': 2,
-                               '3': 3,
-                               '4': 4,
-                               '5': 5,
-                               '6': 6,
-                               '7': 7,
-                               '8': 8,
-                               '9': 9,
-                               'T': 10,
-                               'J': 11,
-                               'Q': 12,
-                               'K': 13}
+        rank_sort_order_map = {
+            "A": 1,
+            "2": 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8,
+            "9": 9,
+            "T": 10,
+            "J": 11,
+            "Q": 12,
+            "K": 13,
+        }
 
         self.sort_order = rank_sort_order_map[rank]
 
@@ -128,13 +127,11 @@ class Card(object):
         return self.__dict__ == other.__dict__
 
     def __add__(self, other):
-        """
-        """
+        """ """
         return self.value + other.value
 
     def __radd__(self, other):
-        """
-        """
+        """ """
         return self.value + other
 
     # TBW 2016-07-21
@@ -215,12 +212,13 @@ class Hand(list):
         from the current hand.
         """
 
-        if 'count' in kwargs:
-            for combo in combinations(self, kwargs['count']):
+        if "count" in kwargs:
+            for combo in combinations(self, kwargs["count"]):
                 yield Hand(combo)
         else:
-            for combo in chain.from_iterable(combinations(self, r)
-                                             for r in range(len(self) + 1)):
+            for combo in chain.from_iterable(
+                combinations(self, r) for r in range(len(self) + 1)
+            ):
                 yield Hand(combo)
 
 
@@ -257,7 +255,7 @@ def count_fifteens(hand):
     points.
     """
     combos = list(find_fifteens_combos(hand))
-    return len(combos), len(combos)*2
+    return len(combos), len(combos) * 2
 
 
 def find_pairs(hand):
@@ -276,7 +274,7 @@ def count_pairs(hand):
     worth 3 points.
     """
     pairs = list(find_pairs(hand))
-    return len(pairs), len(pairs)*2
+    return len(pairs), len(pairs) * 2
 
 
 def find_runs(hand):
@@ -285,11 +283,13 @@ def find_runs(hand):
     cards. Returns each set of cards that makes a run.
     """
     runs = []
-    for combo in chain.from_iterable(combinations(hand, r)
-                                     for r in range(3, len(hand)+1)):
+    for combo in chain.from_iterable(
+        combinations(hand, r) for r in range(3, len(hand) + 1)
+    ):
 
-        for k, g in groupby(enumerate(Hand(combo).sorted()),
-                            lambda ix: ix[0] - ix[1].sort_order):
+        for k, g in groupby(
+            enumerate(Hand(combo).sorted()), lambda ix: ix[0] - ix[1].sort_order
+        ):
 
             # strip out the enumeration and get the cards in the group
             new_hand = Hand([i[1] for i in g])
@@ -360,7 +360,7 @@ def count_nobs(hand, cut):
     if not cut:
         return 0
 
-    if any([c.suit == cut.suit and c.rank == 'J' for c in hand]):
+    if any([c.suit == cut.suit and c.rank == "J" for c in hand]):
         return 1
 
     else:
@@ -375,55 +375,55 @@ def score_hand(hand, cut, **kwargs):
     """
 
     # defaults
-    is_crib = False if 'is_crib' not in kwargs else kwargs['is_crib']
+    is_crib = False if "is_crib" not in kwargs else kwargs["is_crib"]
 
     full_hand = Hand(hand + [cut]) if cut else hand
     scores = {}  # contain the scores
     count = {}  # contain the counts for items that can hit multiple times
 
     number, value = count_fifteens(full_hand)
-    count['fifteen'] = number
-    scores['fifteen'] = value
+    count["fifteen"] = number
+    scores["fifteen"] = value
 
     number, value = count_pairs(full_hand)
-    count['pair'] = number
-    scores['pair'] = value
+    count["pair"] = number
+    scores["pair"] = value
 
     number, value = count_runs(full_hand)
-    count['run'] = number
-    scores['run'] = value
+    count["run"] = number
+    scores["run"] = value
 
-    scores['flush'] = count_flushes(hand, cut, is_crib)
-    scores['nobs'] = count_nobs(hand, cut)
+    scores["flush"] = count_flushes(hand, cut, is_crib)
+    scores["nobs"] = count_nobs(hand, cut)
 
     return scores, count
 
 
 def display_points(hand, cut, scores, counts):
-    print('Hand      = {}'.format(','.join(hand.sorted().cool_display())))
-    print('Cut       = {}'.format(cut.cool_display if cut else 'N/A'))
+    print("Hand      = {}".format(",".join(hand.sorted().cool_display())))
+    print("Cut       = {}".format(cut.cool_display if cut else "N/A"))
     print()
 
-    print('{} Fifteens for {}'.format(counts['fifteen'], scores['fifteen']))
-    print('{} Pairs for    {}'.format(counts['pair'], scores['pair']))
-    print('{} Runs for     {}'.format(counts['run'], scores['run']))
-    print('Flush for      {}'.format(scores['flush']))
-    print('Nobs for       {}'.format(scores['nobs']))
-    print('-----------------')
-    print('Total          {}'.format(sum([v for k, v in scores.items()])))
+    print("{} Fifteens for {}".format(counts["fifteen"], scores["fifteen"]))
+    print("{} Pairs for    {}".format(counts["pair"], scores["pair"]))
+    print("{} Runs for     {}".format(counts["run"], scores["run"]))
+    print("Flush for      {}".format(scores["flush"]))
+    print("Nobs for       {}".format(scores["nobs"]))
+    print("-----------------")
+    print("Total          {}".format(sum([v for k, v in scores.items()])))
     print()
 
     full_hand = Hand(hand + [cut]) if cut else hand
-    print('Fifteens====')
+    print("Fifteens====")
     for combo in find_fifteens_combos(full_hand):
-        print('{} = 15'.format(', '.join(combo.cool_display())))
+        print("{} = 15".format(", ".join(combo.cool_display())))
 
     print()
-    print('Pairs====')
+    print("Pairs====")
     for combo in find_pairs(full_hand):
-        print('{}'.format(', '.join(combo.cool_display())))
+        print("{}".format(", ".join(combo.cool_display())))
 
     print()
-    print('Runs====')
+    print("Runs====")
     for combo in find_runs(full_hand):
-        print(', '.join(combo.cool_display()))
+        print(", ".join(combo.cool_display()))

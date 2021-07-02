@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -31,14 +31,11 @@ import click
 # ------------
 
 
-
 @click.group()
 @click.version_option()
 @click.pass_context
 def main(*args, **kwargs):
-    """
-
-    """
+    """ """
 
     # Initialize the shared context object to a dictionary and configure it for the app
     ctx = args[0]

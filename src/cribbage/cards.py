@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -43,109 +43,133 @@ from collections.abc import MutableSequence
 # -------------
 
 # Shared tuple that stores the card ranks
-ranks = (
-    'A',
-    '2', '3', '4', '5', '6', '7', '8', '9',
-    'T', 'J', 'Q', 'K',
-    )
+RANKS = (
+    "A",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "T",
+    "J",
+    "Q",
+    "K",
+)
 
 # shared tuple that stores the card suits
-suits = ('D', 'H', 'C', 'S')
+SUITS = ("D", "H", "C", "S")
 
 SUIT_SYMBOLS = {
-    'H': '♥', #u'\u2665',
-    'D': '♦', #u'\u2666',
-    'S': '♠', #u'\u2660',
-    'C': '♣', #u'\u2663',
+    "C": "♣",  # u'\u2663',
+    "D": "♦",  # u'\u2666',
+    "H": "♥",  # u'\u2665',
+    "S": "♠",  # u'\u2660',
 }
+
+RANK_SORT = {
+    "A": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9,
+    "T": 11,
+    "J": 12,
+    "Q": 13,
+    "K": 14,
+}
+
+SUIT_SORT = {
+    "H": 0,
+    "D": 100,
+    "S": 200,
+    "C": 300,
+}
+
+
+# TODO: Implement the card sort order instead of using the grouping
 
 CARD_SYMBOLS = {
-
     # Spades
-
-    'AS':'🂡', # "\U0001F0A1" - Ace of Spades
-    '2S':'🂢', # "\U0001F0A2" - Two of Spades
-    '3S':'🂣', # "\U0001F0A3" - Three of Spades
-    '4S':'🂤', # "\U0001F0A4" - Four of Spades
-    '5S':'🂥', # "\U0001F0A5" - Five of Spades
-    '6S':'🂦', # "\U0001F0A6" - Six of Spades
-    '7S':'🂧', # "\U0001F0A7" - Seven of Spades
-    '8S':'🂨', # "\U0001F0A8" - Eight of Spades
-    '9S':'🂩', # "\U0001F0A9" - Nine of Spades
-    'TS':'🂪', # "\U0001F0AA" - Ten of Spades
-    'JS':'🂫', # "\U0001F0AB" - Jack of Spades
-    'QS':'🂭', # "\U0001F0AD" - Queen of Spades
-    'KS':'🂮', # "\U0001F0AE" - King of Spades
-
+    "AS": "🂡",  # "\U0001F0A1" - Ace of Spades
+    "2S": "🂢",  # "\U0001F0A2" - Two of Spades
+    "3S": "🂣",  # "\U0001F0A3" - Three of Spades
+    "4S": "🂤",  # "\U0001F0A4" - Four of Spades
+    "5S": "🂥",  # "\U0001F0A5" - Five of Spades
+    "6S": "🂦",  # "\U0001F0A6" - Six of Spades
+    "7S": "🂧",  # "\U0001F0A7" - Seven of Spades
+    "8S": "🂨",  # "\U0001F0A8" - Eight of Spades
+    "9S": "🂩",  # "\U0001F0A9" - Nine of Spades
+    "TS": "🂪",  # "\U0001F0AA" - Ten of Spades
+    "JS": "🂫",  # "\U0001F0AB" - Jack of Spades
+    "QS": "🂭",  # "\U0001F0AD" - Queen of Spades
+    "KS": "🂮",  # "\U0001F0AE" - King of Spades
     # Hearts
-
-    'AH':'🂱', # "\U0001F0B1" - Ace of Hearts
-    '2H':'🂲', # "\U0001F0B2" - Two of Hearts
-    '3H':'🂳', # "\U0001F0B3" - Three of Hearts
-    '4H':'🂴', # "\U0001F0B4" - Four of Hearts
-    '5H':'🂵', # "\U0001F0B5" - Five of Hearts
-    '6H':'🂶', # "\U0001F0B6" - Six of Hearts
-    '7H':'🂷', # "\U0001F0B7" - Seven of Hearts
-    '8H':'🂸', # "\U0001F0B8" - Eight of Hearts
-    '9H':'🂹', # "\U0001F0B9" - Nine of Hearts
-    'TH':'🂺', # "\U0001F0BA" - Ten of Hearts
-    'JH':'🂻', # "\U0001F0BB" - Jack of Hearts
-    'QH':'🂽', # "\U0001F0BD" - Queen of Hearts
-    'KH':'🂾', # "\U0001F0BE" - King of Hearts
-
+    "AH": "🂱",  # "\U0001F0B1" - Ace of Hearts
+    "2H": "🂲",  # "\U0001F0B2" - Two of Hearts
+    "3H": "🂳",  # "\U0001F0B3" - Three of Hearts
+    "4H": "🂴",  # "\U0001F0B4" - Four of Hearts
+    "5H": "🂵",  # "\U0001F0B5" - Five of Hearts
+    "6H": "🂶",  # "\U0001F0B6" - Six of Hearts
+    "7H": "🂷",  # "\U0001F0B7" - Seven of Hearts
+    "8H": "🂸",  # "\U0001F0B8" - Eight of Hearts
+    "9H": "🂹",  # "\U0001F0B9" - Nine of Hearts
+    "TH": "🂺",  # "\U0001F0BA" - Ten of Hearts
+    "JH": "🂻",  # "\U0001F0BB" - Jack of Hearts
+    "QH": "🂽",  # "\U0001F0BD" - Queen of Hearts
+    "KH": "🂾",  # "\U0001F0BE" - King of Hearts
     # Diamonds
-
-    'AD':'🃁', # "\U0001F0C1" - Ace of Diamonds
-    '2D':'🃂', # "\U0001F0C2" - Two of Diamonds
-    '3D':'🃃', # "\U0001F0C3" - Three of Diamonds
-    '4D':'🃄', # "\U0001F0C4" - Four of Diamonds
-    '5D':'🃅', # "\U0001F0C5" - Five of Diamonds
-    '6D':'🃆', # "\U0001F0C6" - Six of Diamonds
-    '7D':'🃇', # "\U0001F0C7" - Seven of Diamonds
-    '8D':'🃈', # "\U0001F0C8" - Eight of Diamonds
-    '9D':'🃉', # "\U0001F0C9" - Nine of Diamonds
-    'TD':'🃊', # "\U0001F0CA" - Ten of Diamonds
-    'JD':'🃋', # "\U0001F0CB" - Jack of Diamonds
-    'QD':'🃍', # "\U0001F0CD" - Queen of Diamonds
-    'KD':'🃎', # "\U0001F0CE" - King of Diamonds
-
+    "AD": "🃁",  # "\U0001F0C1" - Ace of Diamonds
+    "2D": "🃂",  # "\U0001F0C2" - Two of Diamonds
+    "3D": "🃃",  # "\U0001F0C3" - Three of Diamonds
+    "4D": "🃄",  # "\U0001F0C4" - Four of Diamonds
+    "5D": "🃅",  # "\U0001F0C5" - Five of Diamonds
+    "6D": "🃆",  # "\U0001F0C6" - Six of Diamonds
+    "7D": "🃇",  # "\U0001F0C7" - Seven of Diamonds
+    "8D": "🃈",  # "\U0001F0C8" - Eight of Diamonds
+    "9D": "🃉",  # "\U0001F0C9" - Nine of Diamonds
+    "TD": "🃊",  # "\U0001F0CA" - Ten of Diamonds
+    "JD": "🃋",  # "\U0001F0CB" - Jack of Diamonds
+    "QD": "🃍",  # "\U0001F0CD" - Queen of Diamonds
+    "KD": "🃎",  # "\U0001F0CE" - King of Diamonds
     # Clubs
-
-    'AC':'🃑', # "\U0001F0D1" - Ace of Clubs
-    '2C':'🃒', # "\U0001F0D2" - Two of Clubs
-    '3C':'🃓', # "\U0001F0D3" - Three of Clubs
-    '4C':'🃔', # "\U0001F0D4" - Four of Clubs
-    '5C':'🃕', # "\U0001F0D5" - Five of Clubs
-    '6C':'🃖', # "\U0001F0D6" - Six of Clubs
-    '7C':'🃗', # "\U0001F0D7" - Seven of Clubs
-    '8C':'🃘', # "\U0001F0D8" - Eight of Clubs
-    '9C':'🃙', # "\U0001F0D9" - Nine of Clubs
-    'TC':'🃚', # "\U0001F0DA" - Ten of Clubs
-    'JC':'🃛', # "\U0001F0DB" - Jack of Clubs
-    'QC':'🃝', # "\U0001F0DD" - Queen of Clubs
-    'KC':'🃞', # "\U0001F0DE" - King of Clubs
-
+    "AC": "🃑",  # "\U0001F0D1" - Ace of Clubs
+    "2C": "🃒",  # "\U0001F0D2" - Two of Clubs
+    "3C": "🃓",  # "\U0001F0D3" - Three of Clubs
+    "4C": "🃔",  # "\U0001F0D4" - Four of Clubs
+    "5C": "🃕",  # "\U0001F0D5" - Five of Clubs
+    "6C": "🃖",  # "\U0001F0D6" - Six of Clubs
+    "7C": "🃗",  # "\U0001F0D7" - Seven of Clubs
+    "8C": "🃘",  # "\U0001F0D8" - Eight of Clubs
+    "9C": "🃙",  # "\U0001F0D9" - Nine of Clubs
+    "TC": "🃚",  # "\U0001F0DA" - Ten of Clubs
+    "JC": "🃛",  # "\U0001F0DB" - Jack of Clubs
+    "QC": "🃝",  # "\U0001F0DD" - Queen of Clubs
+    "KC": "🃞",  # "\U0001F0DE" - King of Clubs
 }
 
-
-
-# set the cards sorting order - useful for sorting a list of cards.
-rank_sort_order_map = {
-    'A': 1,
-    '2': 2,
-    '3': 3,
-    '4': 4,
-    '5': 5,
-    '6': 6,
-    '7': 7,
-    '8': 8,
-    '9': 9,
-    'T': 10,
-    'J': 11,
-    'Q': 12,
-    'K': 13,
-}
-
+# # set the cards sorting order - useful for sorting a list of cards.
+# rank_sort_order_map = {
+#     'A': 1,
+#     '2': 2,
+#     '3': 3,
+#     '4': 4,
+#     '5': 5,
+#     '6': 6,
+#     '7': 7,
+#     '8': 8,
+#     '9': 9,
+#     'T': 10,
+#     'J': 11,
+#     'Q': 12,
+#     'K': 13,
+# }
 
 
 @dataclass(frozen=True)
@@ -198,22 +222,21 @@ class Card:
         """
 
         if self.rank is None:
-            raise ValueError('Card.rank is not set!')
+            raise ValueError("Card.rank is not set!")
 
         if self.suit is None:
-            raise ValueError('Card.suit is not set!')
+            raise ValueError("Card.suit is not set!")
 
         # We only want upper case values for the rank and suit and we
         # have to use this call because the class is frozen
-        object.__setattr__(self, 'rank', self.rank.upper())
-        object.__setattr__(self, 'suit', self.suit.upper())
+        object.__setattr__(self, "rank", self.rank.upper())
+        object.__setattr__(self, "suit", self.suit.upper())
 
-        if self.rank not in ranks:
-            raise ValueError(f'INVALID Rank ({self.rank})! Must be one of: {ranks}!')
+        if self.rank not in RANKS:
+            raise ValueError(f"INVALID Rank ({self.rank})! Must be one of: {RANKS}!")
 
-        if self.suit not in suits:
-            raise ValueError(f'INVALID Suit ({self.suit})! Must be one of: {suits}!')
-
+        if self.suit not in SUITS:
+            raise ValueError(f"INVALID Suit ({self.suit})! Must be one of: {SUITS}!")
 
     def value(self) -> int:
         """
@@ -239,10 +262,10 @@ class Card:
 
         """
 
-        if self.rank == 'A':
+        if self.rank == "A":
             return 1
 
-        elif self.rank in ('T', 'J', 'Q', 'K'):
+        elif self.rank in ("T", "J", "Q", "K"):
             return 10
 
         else:
@@ -268,7 +291,6 @@ class Card:
 
             return self.rank + SUIT_SYMBOLS[self.suit]
 
-
     def __add__(self, other):
         """
         By implementing this we can add the value of cards together
@@ -293,10 +315,22 @@ class Card:
 
     def __lt__(self, other):
         """
-        Make the item sortable
+        Make the item sortable by rank
+
+        This will sort by suit, then rank effectively grouping cards
+        that are the same suit together.
+
+        If you need something different, use the key function on the
+        sorted method for a list of cards:
+
+        sorted(hand, key=lambda x: RANK_SORT[x.rank]))
+
         """
 
-        return rank_sort_order_map[self.rank] < rank_sort_order_map[other.rank]
+        return (SUIT_SORT[self.suit], RANK_SORT[self.rank]) < (
+            SUIT_SORT[other.suit],
+            RANK_SORT[other.rank],
+        )
 
     def __str__(self):
         """
@@ -320,7 +354,7 @@ def make_deck():
 
     """
 
-    return [Card(*p) for p in product(ranks, suits)]
+    return [Card(*p) for p in product(RANKS, SUITS)]
 
 
 # class Hand(MutableSequence):
@@ -489,7 +523,6 @@ def make_deck():
 #                 yield Hand(combo)
 
 
-
 # def hand_duplicates(hand):
 #     """
 #     """
@@ -498,7 +531,7 @@ def make_deck():
 #         raise ValueError('Duplicate cards are not allowed!')
 
 
-def display_hand(hand, cool=False):
+def display_hand(hand, cool=False, super_cool=False):
     """
     Given a list of Cards, return a list of strings representing the
     rank and suit of each card.
@@ -510,8 +543,12 @@ def display_hand(hand, cool=False):
 
     cool:bool
         - If this option is turned on, the suit will be converted to a
-          unicode representation.
-        - Default - False
+          unicode representation displaying 'AH' as 'A♥'.
+        - DEFAULT - False
+
+    super_cool:bool
+        - if this option is set, will display the 'AS' as 🂱
+        - DEFAULT - False
 
     # Return
 
@@ -521,7 +558,7 @@ def display_hand(hand, cool=False):
     """
 
     if cool:
-        return [card.cool_display() for card in hand]
+        return [card.cool_display(display_card=super_cool) for card in hand]
 
     else:
         return [str(card) for card in hand]
@@ -630,47 +667,37 @@ def hand_combinations(hand, combination_length=None):
             yield combo
 
 
+# def deal_hand(deck, count):
+#     """
+#     Deals a hand with `count` cards from the deck. The dealt cards are
+#     removed from the deck.
+
+#     # Parameters
+
+#     deck:list[Card]
+#         - A list of cards
+
+#     count:int
+#         - The number cards to deal to form a hand.
 
 
+#     # NOTE
 
+#     The cards will be automatically removed from the deck
 
+#     This has to be revised - we don't deal 5 cards to the pone
+#     and then 5 cards to the dealer. They are dealt alternating
+#     starting with the pones hand, then the dealer, back and forth.
 
+#     May need to implment fisher-yates algorithm
+#         - https://emctackett.medium.com/fisher-yates-shuffle-randomly-shuffle-a-list-in-place-30a05b05a9cb
 
+#     """
 
+#     hand = Hand(deck[:count])
+#     del deck[:count]
 
-
-
-def deal_hand(deck, count):
-    """
-    Deals a hand with `count` cards from the deck. The dealt cards are
-    removed from the deck.
-
-    # Parameters
-
-    deck:list[Card]
-        - A list of cards
-
-    count:int
-        - The number cards to deal to form a hand.
-
-
-    # NOTE
-
-    The cards will be automatically removed from the deck
-
-    This has to be revised - we don't deal 5 cards to the pone
-    and then 5 cards to the dealer. They are dealt alternating
-    starting with the pones hand, then the dealer, back and forth.
-
-    May need to implment fisher-yates algorithm
-        - https://emctackett.medium.com/fisher-yates-shuffle-randomly-shuffle-a-list-in-place-30a05b05a9cb
-
-    """
-
-    hand = Hand(deck[:count])
-    del deck[:count]
-
-    return hand
+#     return hand
 
 
 def find_fifteens(hand):
@@ -694,9 +721,10 @@ def find_fifteens(hand):
     that adds to 15.
 
     """
-    for combo in hand.every_combination():
-        if combo.value() == 15:
+    for combo in hand_combinations(hand):
+        if count_hand(combo) == 15:
             yield combo
+
 
 def find_pairs(hand):
     """
@@ -707,13 +735,14 @@ def find_pairs(hand):
     yield pairs of cards.
     """
 
-    for left, right in hand.every_combination(count=2):
+    for left, right in hand_combinations(hand, combination_length=2):
         if left.rank == right.rank:
-            yield combo
+            yield left, right
 
     # for combo in hand.every_combination(count=2):
     #     if combo[0].rank == combo[1].rank:
     #         yield combo
+
 
 def find_runs(hand):
     """
@@ -732,34 +761,85 @@ def find_runs(hand):
     Cards yielding the combinations.
 
     """
-    runs = []
-    for combo in chain.from_iterable(combinations(hand, r)
-                                     for r in range(3, len(hand)+1)):
 
-        for k, g in groupby(enumerate(Hand(sorted(combo))),
-                            lambda ix: ix[0] - ix[1].sort_order):
+    # Iterate through every combination of at least 3 cards or more. We
+    # are looking for combinations that have delta values between the
+    # ranks of the Card elements in the hand having a value equal to 1.
 
-            # strip out the enumeration and get the cards in the group
-            new_hand = Hand([i[1] for i in g])
-            if len(new_hand) < 3:
+    # [3,4,5] -> [4 - 3 = 1, 5 - 6 = 1]
+
+    # NOTE: We'll use the chain from iterable though the list of lists, one
+    # list of cards at a time
+
+    runs = []  # Store the sets of runs
+
+    for combo in chain.from_iterable(
+        combinations(hand, r) for r in range(3, len(hand) + 1)
+    ):
+
+        # The groupby method works by using the enumeration and
+        # iterating through all the items in the list. It looks for
+        # constant distance between the enumeration value and the list
+        # item. For example, take the data set below:
+
+        # >>> data = [ 1,  4,5,6, 10, 15,16,17,18, 22, 25,26,27,28]
+
+        # Applying the following groupby setup, we have the following
+        # groups created:
+
+        # [(0, 1)]
+        # [(1, 4), (2, 5), (3, 6)]
+        # [(4, 10)]
+        # [(5, 15), (6, 16), (7, 17), (8, 18)]
+        # [(9, 22)]
+        # [(10, 25), (11, 26), (12, 27), (13, 28)]
+
+        # 1 - 4 = -3, 2 - 5 = -3, 3 - 6 = -3
+
+        # The enumeration value is by definition a monotonic increasing
+        # value. If each element in our sequence is one unit greater,
+        # we have a constant factor
+
+        # That is what defines the grouping key!
+
+        # We need to sort the combos, by ranks, otherwise the groupby will not work properly
+        # NOTE: Runs/Straights are not dependent on suits
+
+        for k, g in groupby(
+            enumerate(sorted(combo, key=lambda x: RANK_SORT[x.rank])),
+            lambda x: x[0] - RANK_SORT[x[1].rank],
+        ):
+
+            values = list(g)
+
+            # We need at least 3 cards to make a run
+            if len(values) < 3:
                 continue
 
-            m = set(new_hand)
+            cards = [c[1] for c in values]
 
-            # check to see if the new run is a subset of an existing run
-            if any([m.issubset(s) for s in runs]):
+            # create a set so that membership testing is trivial
+            candidate = set(cards)
+
+            # Is this run a subset of an existing run
+            if any([candidate.issubset(s) for s in runs]):
                 continue
 
-            # if the new run is a super set of previous runs, we need to remove
-            # them
-            l = [m.issuperset(s) for s in runs]
+            # Is this run a superset of an existing run
+            l = [candidate.issuperset(s) for s in runs]
             if any(l):
+                # l will be a list of True/False values indicating if
+                # any of the sets in the runs list is a subset of candidate.
+                # Add the runs to the list as long as they are not
+                # subsets of candidate. This effectively removes the subsets.
+
                 runs = [r for r, t in zip(runs, l) if not t]
 
-            if m not in runs:
-                runs.append(m)
+            if candidate not in runs:
+                runs.append(candidate)
 
-    return [Hand(list(r)).sorted() for r in runs]
+    # Convert the sets to list and sort by rank so we can see the runs
+    return [sorted(list(r), key=lambda x: RANK_SORT[x.rank]) for r in runs]
 
 
 def find_flushes(hand, cut):
@@ -833,12 +913,12 @@ def find_combinations(hand, cut):
     full_hand = Hand(hand + [cut])
 
     return {
-        'fifteen':list(find_fifteens(full_hand)),
-        'pair':list(find_pairs(full_hand)),
-        'run':list(find_runs(full_hand)),
-        'flush':find_flushes(hand, cut),
-        'nobs': [c for c in hand if c.suit == cut.suit and c.rank == 'J'],
-        'nibs': [cut] if cut.rank == 'J' else [],
+        "fifteen": list(find_fifteens(full_hand)),
+        "pair": list(find_pairs(full_hand)),
+        "run": list(find_runs(full_hand)),
+        "flush": find_flushes(hand, cut),
+        "nobs": [c for c in hand if c.suit == cut.suit and c.rank == "J"],
+        "nibs": [cut] if cut.rank == "J" else [],
     }
 
 
@@ -883,12 +963,12 @@ def score(hands):
     """
 
     return {
-        'fifteen': len(hands['fifteen'])*2,
-        'pair': len(hands['pair'])*2,
-        'run': sum([len(r) for r in hands['run']]),
-        'flush': len(hands['flush']),
-        'nobs': len(hands['nobs']),
-        'nibs': len(hands['nibs'])*2,
+        "fifteen": len(hands["fifteen"]) * 2,
+        "pair": len(hands["pair"]) * 2,
+        "run": sum([len(r) for r in hands["run"]]),
+        "flush": len(hands["flush"]),
+        "nobs": len(hands["nobs"]),
+        "nibs": len(hands["nibs"]) * 2,
     }
 
 
@@ -918,8 +998,8 @@ def score_hand(hand, cut, **kwargs):
 
     """
 
-    include_nibs = kwargs.get('include_nibs', False)
-    five_card_flush = kwargs.get('five_card_flush', False)
+    include_nibs = kwargs.get("include_nibs", False)
+    five_card_flush = kwargs.get("five_card_flush", False)
 
     hands = find_combinations(hand, cut)
     hand_scores = score(hands)
@@ -940,48 +1020,41 @@ def score_hand(hand, cut, **kwargs):
         total += hand_scores["nibs"]
 
     summary = [
-        f'Hand      = {hand.sorted().cool_display()}',
-        f'Cut       = {cut.cool_display()}',
+        f"Hand      = {hand.sorted().cool_display()}",
+        f"Cut       = {cut.cool_display()}",
         f'{len(hands["fifteen"])} Fifteens for {hand_scores["fifteen"]}',
         f'{len(hands["pair"])} Pairs for    {hand_scores["pair"]}',
         f'{len(hands["run"])} Runs for     {hand_scores["run"]}',
-        f'Flush for      {flush}',
+        f"Flush for      {flush}",
         f'Nobs for       {hand_scores["nobs"]}',
         f'Nibs for       {hand_scores["nibs"] if include_nibs else 0}',
-        '-----------------',
-        f'Total          {total}',
+        "-----------------",
+        f"Total          {total}",
     ]
 
-    if hands['fifteen']:
+    if hands["fifteen"]:
 
-        items = ['', 'Fifteens ====']
-        for f in hands['fifteen']:
-            items.append(f'{f.cool_display()} = 15')
-
-        summary.extend(items)
-
-    if hands['pair']:
-
-        items = ['', 'Pairs ====']
-        for f in hands['pair']:
-            items.append(f'{f.cool_display()}')
+        items = ["", "Fifteens ===="]
+        for f in hands["fifteen"]:
+            items.append(f"{f.cool_display()} = 15")
 
         summary.extend(items)
 
-    if hands['run']:
+    if hands["pair"]:
 
-        items = ['', 'Runs ====']
+        items = ["", "Pairs ===="]
+        for f in hands["pair"]:
+            items.append(f"{f.cool_display()}")
 
-        for f in hands['run']:
-            items.append(f'{f.cool_display()}')
+        summary.extend(items)
+
+    if hands["run"]:
+
+        items = ["", "Runs ===="]
+
+        for f in hands["run"]:
+            items.append(f"{f.cool_display()}")
 
         summary.extend(items)
 
     return summary
-
-
-
-
-
-
-
