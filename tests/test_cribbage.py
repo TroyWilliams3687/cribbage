@@ -496,21 +496,20 @@ def test_find_runs(data):
 # Test find_flushes
 
 left = (("2C", "3C", "4C", "8C"), ('QS'))
-right = (("2C", "3C", "4C", "8C"), None)
+right = ("2C", "3C", "4C", "8C")
 
 data = [(left, right)]
 
 left = (("2C", "3S", "4C", "8C"), ('TD'))
-right = ((),None)
+right = ()
 
 data.append((left,right))
 
 
 left = (("2C", "3S", "4C", "8C"), ('TC'))
-right = (("2C", "4C", "8C"), ('TC'))
+right = ("2C", "4C", "8C", 'TC')
 
 data.append((left,right))
-
 
 @pytest.mark.parametrize("data", data)
 def test_find_flushes(data):
@@ -520,21 +519,43 @@ def test_find_flushes(data):
     hand_left, cut_left = left
 
     cards = [Card(*c) for c in hand_left]
-    hand, cut = [c for c in find_flushes(cards, Card(*cut_left))]
+    hand = [c for c in find_flushes(cards, Card(*cut_left))]
 
-    hand_right, cut_right = right
+    assert len(hand) == len(right)
 
-    assert len(hand) == len(hand_right)
-
-    if cut is None:
-        assert cut == cut_right
-
-    else:
-        assert str(cut) == cut_right
-
-    assert all(str(u) == v for u, v in zip(hand, hand_right))
+    assert all(str(u) == v for u, v in zip(hand, right))
 
 
 # -------------
 # Test find_combinations
 
+
+# left = (("2C", "3C", "4C", "8C"), ('QS'))
+# right = ()
+
+# data = [(left, right)]
+
+
+# @pytest.mark.parametrize("data", data)
+# def test_find_combinations(data):
+
+#     left, right = data
+
+#     hand_left, cut_left = left
+
+#     cards = [Card(*c) for c in hand_left]
+#     results = [c for c in find_combinations(cards, Card(*cut_left))]
+
+
+
+    # hand_right, cut_right = right
+
+    # assert len(hand) == len(hand_right)
+
+    # if cut is None:
+    #     assert cut == cut_right
+
+    # else:
+    #     assert str(cut) == cut_right
+
+    # assert all(str(u) == v for u, v in zip(hand, hand_right))

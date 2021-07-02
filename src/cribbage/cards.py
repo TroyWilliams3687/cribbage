@@ -848,6 +848,21 @@ def find_flushes(hand, cut):
 
     Return the cards in the hand that form a flush and/or the cut card
 
+    Hand =["2C", "3C", "4C", "8C"], Cut = 'QS'
+    returns ("2C", "3C", "4C", "8C")
+
+    Hand = ("2C", "3S", "4C", "8C") Cut = 'TC'
+    returns ("2C", "4C", "8C", 'TC')
+
+    # Return
+
+    The list of cards forming a flush, it'll either be 4 or 5 cards.
+
+    # NOTE
+
+    If it is important to understand if the cut card is included, you'll
+    have to check to see if it is in the returned list
+
     """
 
     assert len(hand) == 4
@@ -856,7 +871,7 @@ def find_flushes(hand, cut):
     flush_5 = set([c.suit for c in hand] + [cut.suit])
 
     if len(flush_5) == 1:
-        return hand, cut
+        return hand + [cut]
 
     # We don't have a 5 card flush, do we have at least 3 cards + the
     # cut card forming a flush?
@@ -868,26 +883,27 @@ def find_flushes(hand, cut):
 
         values = list(g)
 
-        print(values)
-
         if len(values) == 3:
+
+            # Do we have 4 cards with 3 from the hand and the cut card?
 
             if len(set([c.suit for c in values] + [cut.suit])) == 1:
                 # we found enough cards, let's bale, there won't be anything
                 # else
 
-                return values, cut
+                return values + [cut]
 
         elif len(values) == 4:
             # we have 4 cards, we know the cut card doesn't need to be
-            # counted otherwise we would have had a 5 card flush
+            # counted otherwise we would have had a 5 card flush - we
+            # are done here
 
-            return values, None
+            return values
 
         else:
             continue
 
-    return [], None
+    return []
 
 
 
