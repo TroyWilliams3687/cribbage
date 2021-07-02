@@ -846,20 +846,49 @@ def find_flushes(hand, cut):
     """
     Find the flushes, only 4 card or 5 card flushes allowed
 
-    Return the hand containing the number of cards
+    Return the cards in the hand that form a flush and/or the cut card
 
     """
 
-    flush_4 = set([c.suit for c in hand])
-    flush_5 = flush_4.add(cut.suit)
+    assert len(hand) == 4
+
+    # Does the hand contain a flush of 5?
+    flush_5 = set([c.suit for c in hand] + [cut.suit])
 
     if len(flush_5) == 1:
-        return hand + [cut]
+        return hand, cut
 
-    if len(flush_4) == 1:
-        return hand
+    # We don't have a 5 card flush, do we have at least 3 cards + the
+    # cut card forming a flush?
 
-    return []
+    for k, g in groupby(
+            sorted(hand, key=lambda x: SUIT_SORT[x.suit]),
+            lambda x: SUIT_SORT[x.suit],
+        ):
+
+        values = list(g)
+
+        print(values)
+
+        if len(values) == 3:
+
+            if len(set([c.suit for c in values] + [cut.suit])) == 1:
+                # we found enough cards, let's bale, there won't be anything
+                # else
+
+                return values, cut
+
+        elif len(values) == 4:
+            # we have 4 cards, we know the cut card doesn't need to be
+            # counted otherwise we would have had a 5 card flush
+
+            return values, None
+
+        else:
+            continue
+
+    return [], None
+
 
 
 def find_combinations(hand, cut):
