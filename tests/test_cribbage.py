@@ -533,3 +533,8 @@ def test_find_flushes(data):
         assert str(cut) == cut_right
 
     assert all(str(u) == v for u, v in zip(hand, hand_right))
+
+
+# -------------
+# Test find_combinations
+

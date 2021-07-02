@@ -893,8 +893,11 @@ def find_flushes(hand, cut):
 
 def find_combinations(hand, cut):
     """
-    Given the pone hand and cut card, find all interesting combinations
-    of cards. We are looking for:
+    Given the hand and cut card, find all interesting combinations of
+    cards. This includes and dealer specific or cut specific
+    combinations.
+
+    We are looking for:
 
     - 15 - Search for all card combinations (hand and cut card
       combined), with the ranks adding to 15. E.g.: [5, 10], [2,3,10]
@@ -955,7 +958,9 @@ def score(hands):
     """
     Once the combinations are discovered within the hand, this method
     will take the dictionary containing the combinations and score
-    them. The dictionary is keyed as follows:
+    them.
+
+    The dictionary is keyed as follows:
 
     - 'fifteen' - A list of cards that sum to 15
     - 'pair' - All of the car pair combinations found in the hand
@@ -1018,12 +1023,12 @@ def score_hand(hand, cut, **kwargs):
     include_nibs:bool
         - Include the calculation of nibs.
         - Only dealer can claim this.
-        - Default - False
+        - DEFAULT - False
 
     five_card_flush:bool
         - Only count the flush if it is 5 cards.
         - Only applied when counting the crib.
-        - Default - False
+        - DEFAULT - False
 
     """
 
