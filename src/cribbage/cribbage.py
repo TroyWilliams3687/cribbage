@@ -162,7 +162,7 @@ def score(*args, **kwargs):
     hand.sort()
 
     # Count Everything -
-    results = score_hand(
+    total, results = score_hand(
         hand,
         cut,
         include_nibs=kwargs["dealer"],

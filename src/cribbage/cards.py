@@ -905,4 +905,47 @@ def score_hand(
 
     summary.append("")
 
-    return summary
+    return total, summary
+
+def maximum_hand_value(hand):
+    """
+
+    Given a hand of 6 cards, determine the maximum score of all the
+    possible 4 hand card combinations.
+
+    # Parameters
+
+    hand:list(Card)
+        - The list of 6 cards we want to examine.
+
+    # Return
+
+    The list of 4 cards that provide the maximum value
+
+    # NOTE
+
+    This method ignores the cut card, and there for nibs. It also
+    doesn't include 5 card flushes for obvious reasons.
+
+    """
+
+    assert len(hand) == 6
+
+
+
+    # max_score = 0
+    # best_hand = None
+
+    # for combo in hand.every_combination(count=4):
+    #     new_hand = Hand(combo).sorted()
+
+    #     scores, counts = score_hand(new_hand, cut)
+    #     score = sum([v for k,v in scores.items()])
+
+    #     if score > max_score:
+    #         max_score = score
+    #         best_hand = new_hand
+
+    # return max_score, best_hand
+
+
