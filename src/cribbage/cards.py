@@ -856,7 +856,9 @@ def find_flushes(hand, cut):
 
     # Return
 
-    The list of cards forming a flush, it'll either be 4 or 5 cards.
+    The list of cards forming a flush, it'll either be 4 or 5 cards. It
+    could include the cut card as well. If it is important to determine
+    if the cut card was used, that will have to be decided elsewhere.
 
     # NOTE
 
@@ -970,55 +972,45 @@ def find_combinations(hand, cut):
     }
 
 
-def score(hands):
+def score(values):
     """
-    Once the combinations are discovered within the hand, this method
-    will take the dictionary containing the combinations and score
-    them.
-
-    The dictionary is keyed as follows:
-
-    - 'fifteen' - A list of cards that sum to 15
-    - 'pair' - All of the car pair combinations found in the hand
-    - 'run' - All of the runs found in the hand
-    - 'flush' - All of the flush cards found in the hand
-    - 'nobs' - The nobs card found in the hand.
-    - 'nibs' - The jack cut card.
-
-    This method will score the items as follows:
-
-    - 'fifteen' - 2 points for every combination
-    - 'pair' - 2 points for every pair
-    - 'run' - 1 point per card in each of the runs
-    - 'flush' - 1 point per card in the flush
-    - 'nobs' - 1 point for nobs
-    - 'nibs' - 2 points for his heels
+    Given the dictionary of combinations from the find_combinations
+    method, this method will assign value to each set.  This method
+    will list all of the available points. It is up to the caller to
+    decide which points to use. For example, the pone cannot clam
+    nibs. When counting the crib, only a 5 card flush is counted.
 
     # Parameters
 
-    hands:dict
+    values:dict
         - The dictionary containing the hand combinations to score
 
     # Return
 
     A dictionary containing scores for the card combinations of interest
     with the following keys:
-    - 'fifteen' - 2 points per card combination that sums to 15
-    - 'pair' - 2 points per pair (triples and quads are accounted for)
-    - 'run' - 1 point per card in each run
-    - 'flush' - 1 point per card in the flush
-    - 'nobs' - 1 point for nob
-    - 'nibs' - 2 points for his heels
+
+    - 'fifteen':int - 2 points per card combination that sums to 15
+    - 'pair':int - 2 points per pair (triples and quads are accounted for)
+    - 'run':int - 1 point per card in each run
+    - 'flush':int - 1 point per card in the flush
+    - 'nobs':int - 1 point for nob
+    - 'nibs':int - 2 points for his heels
+
+    # NOTE
+
+    The return dictionary is keyed identical to the find_combinations
+    method.
 
     """
 
     return {
-        "fifteen": len(hands["fifteen"]) * 2,
-        "pair": len(hands["pair"]) * 2,
-        "run": sum([len(r) for r in hands["run"]]),
-        "flush": len(hands["flush"]),
-        "nobs": len(hands["nobs"]),
-        "nibs": len(hands["nibs"]) * 2,
+        "fifteen": len(values["fifteen"]) * 2,
+        "pair": len(values["pair"]) * 2,
+        "run": sum([len(r) for r in values["run"]]),
+        "flush": len(values["flush"]),
+        "nobs": len(values["nobs"]),
+        "nibs": len(values["nibs"]) * 2,
     }
 
 

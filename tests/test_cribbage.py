@@ -38,6 +38,7 @@ from cribbage.cards import (
     find_runs,
     find_flushes,
     find_combinations,
+    score,
 )
 
 # -------------
@@ -578,3 +579,108 @@ def test_find_combinations(data):
     results = find_combinations(cards, Card(*cut_left))
 
     assert results == right
+
+# -------------
+# Test score
+
+left = (("4C", "5C", "6D", "5S"), ('QS')) # 16 point hand
+right = {
+    'fifteen':8,
+    'pair':   2,
+    'run':    6,
+    'flush':  0,
+    'nobs':   0,
+    'nibs':   0,
+}
+
+data = [(left, right)]
+
+left = (("3C", "2S", "6D", "8H"), ('3S')) # 2 point hand
+right = {
+    'fifteen':0,
+    'pair':   2,
+    'run':    0,
+    'flush':  0,
+    'nobs':   0,
+    'nibs':   0,
+}
+
+data.append((left,right))
+
+left = (("3C", "2S", "TD", "8H"), ('6S'))
+right = {
+    'fifteen':2,
+    'pair':   0,
+    'run':    0,
+    'flush':  0,
+    'nobs':   0,
+    'nibs':   0,
+}
+
+data.append((left,right))
+
+left = (("3C", "2S", "AS", "7H"), ('9S'))
+right = {
+    'fifteen':2,
+    'pair':   0,
+    'run':    3,
+    'flush':  0,
+    'nobs':   0,
+    'nibs':   0,
+}
+
+data.append((left,right))
+
+
+left = (("3C", "TC", "AC", "8C"), ('KS'))
+right = {
+    'fifteen':0,
+    'pair':   0,
+    'run':    0,
+    'flush':  4,
+    'nobs':   0,
+    'nibs':   0,
+}
+
+data.append((left,right))
+
+left = (("3C", "TC", "JS", "8C"), ('6S'))
+right = {
+    'fifteen':0,
+    'pair':   0,
+    'run':    0,
+    'flush':  0,
+    'nobs':   1,
+    'nibs':   0,
+}
+
+data.append((left,right))
+
+left = (("3C", "TC", "KS", "8C"), ('JS'))
+right = {
+    'fifteen':0,
+    'pair':   0,
+    'run':    0,
+    'flush':  0,
+    'nobs':   0,
+    'nibs':   2,
+}
+
+data.append((left,right))
+
+@pytest.mark.parametrize("data", data)
+def test_score(data):
+
+    left, right = data
+
+    hand_left, cut_left = left
+
+    cards = [Card(*c) for c in hand_left]
+    results = score(find_combinations(cards, Card(*cut_left)))
+
+    assert results == right
+
+# -------------
+# Test score_hand
+
+
