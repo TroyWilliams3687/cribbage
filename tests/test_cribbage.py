@@ -39,6 +39,7 @@ from cribbage.cards import (
     find_flushes,
     find_combinations,
     score,
+    maximum_four_card_score,
 )
 
 # -------------
@@ -680,3 +681,28 @@ def test_score(data):
 
     assert results == right
 
+# -------------
+# Test maximum_four_card_score
+
+left = ("4C", "5C", "6D", "5S", 'QS', "AD")
+right = (12, ("6D", "5S", "4C", "5C"))
+
+data = [(left, right)]
+
+
+left = ("3S", "8D", "TH", "QS", 'JD', "AD")
+right = (3, ("TH", "JD", "3S", "QS"))
+data.append((left,right))
+
+
+@pytest.mark.parametrize("data", data)
+def test_maximum_four_card_score(data):
+
+    left, right = data
+
+    cards = [Card(*c) for c in left]
+    max_score, hand = maximum_four_card_score(cards)
+
+    assert max_score == right[0]
+
+    assert all(str(u) == v for u, v in zip(hand, right[1]))

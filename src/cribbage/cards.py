@@ -666,10 +666,12 @@ def find_flushes(hand, cut):
     assert len(hand) == 4
 
     # Does the hand contain a flush of 5?
-    flush_5 = set([c.suit for c in hand] + [cut.suit])
 
-    if len(flush_5) == 1:
-        return hand + [cut]
+    if cut:
+        flush_5 = set([c.suit for c in hand] + [cut.suit])
+
+        if len(flush_5) == 1:
+            return hand + [cut]
 
     # We don't have a 5 card flush, do we have at least 3 cards + the
     # cut card forming a flush?
@@ -685,7 +687,7 @@ def find_flushes(hand, cut):
 
             # Do we have 4 cards with 3 from the hand and the cut card?
 
-            if len(set([c.suit for c in values] + [cut.suit])) == 1:
+            if cut and (len(set([c.suit for c in values] + [cut.suit])) == 1):
                 # we found enough cards, let's bale, there won't be anything
                 # else
 
@@ -755,15 +757,15 @@ def find_combinations(hand, cut):
 
     """
 
-    full_hand = hand + [cut]
+    full_hand = hand + [cut] if cut else hand
 
     return {
         "fifteen": list(find_fifteens(full_hand)),
         "pair": list(find_pairs(full_hand)),
         "run": list(find_runs(full_hand)),
         "flush": find_flushes(hand, cut),
-        "nobs": [c for c in hand if c.suit == cut.suit and c.rank == "J"],
-        "nibs": [cut] if cut.rank == "J" else [],
+        "nobs": [c for c in hand if c.suit == cut.suit and c.rank == "J"] if cut else [],
+        "nibs": [cut] if cut and cut.rank == "J" else [],
     }
 
 
@@ -848,8 +850,6 @@ def score_hand(
     breaking the score down.
 
     """
-
-    basic = kwargs.get("basic", False)
 
     hands = find_combinations(hand, cut)
     hand_scores = score(hands)
@@ -970,45 +970,39 @@ def score_hand_breakdown(
     return summary
 
 
-def maximum_hand_value(hand):
+def maximum_four_card_score(hand):
     """
 
-    Given a hand of 6 cards, determine the maximum score of all the
-    possible 4 hand card combinations.
+    Given the hand, determine the maximum score of all 4 hand
+    combinations.
+
+    Generally, this is used to help decide which cards to discard after
+    the deal. Normally you will supply 6 cards. However this method can
+    work with any number of cards, but requires at least 4 cards
+    (which won't be interesting).
 
     # Parameters
 
     hand:list(Card)
-        - The list of 6 cards we want to examine.
+        - The list of cards we want to examine
 
     # Return
 
     The list of 4 cards that provide the maximum value
 
-    # NOTE
-
-    This method ignores the cut card, and there for nibs. It also
-    doesn't include 5 card flushes for obvious reasons.
 
     """
 
-    assert len(hand) == 6
+    assert len(hand) >= 4
 
+    max_score = 0
+    best_hand = None
 
+    for combo in hand_combinations(hand, combination_length=4):
+        result = score_hand(combo, None)
 
-    # max_score = 0
-    # best_hand = None
+        if result > max_score:
+            max_score = result
+            best_hand = combo
 
-    # for combo in hand.every_combination(count=4):
-    #     new_hand = Hand(combo).sorted()
-
-    #     scores, counts = score_hand(new_hand, cut)
-    #     score = sum([v for k,v in scores.items()])
-
-    #     if score > max_score:
-    #         max_score = score
-    #         best_hand = new_hand
-
-    # return max_score, best_hand
-
-
+    return max_score, sorted(best_hand)
