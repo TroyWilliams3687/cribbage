@@ -40,14 +40,22 @@ from .cards import (
 @click.version_option()
 @click.pass_context
 def main(*args, **kwargs):
-    """ """
+    """
+
+    This application will perform various calculations on cribbage hands.
+
+    # Scoring
+
+    Using the score command you can calculate the score of a hand along
+    with the breakdown showing how the score was calculated.
+
+    $ cribbage score 4H 5D 5C 6S JD
+
+    """
 
     # Initialize the shared context object to a dictionary and configure it for the app
     ctx = args[0]
     ctx.ensure_object(dict)
-
-
-
 
 # -----------
 # Add the child menu options
@@ -60,12 +68,12 @@ def main(*args, **kwargs):
 @click.option(
     "--crib",
     is_flag=True,
-    help="Count crib.",
+    help="Count the cards assuming this is the crib.",
 )
 @click.option(
     "--dealer",
     is_flag=True,
-    help="Count dealer hand.",
+    help="Count the cards assuming this is a dealers hand.",
 )
 @click.argument('hand',
     nargs=4,
@@ -78,60 +86,77 @@ def main(*args, **kwargs):
 @click.pass_context
 def score(*args, **kwargs):
     """
-    Given the 4 cards in your hand and a cut card, score the hand.
+    Given the 4 cards in your hand and a cut card, score the hand using
+    cribbage rules and scoring conventions.
 
     This command expects the first four cards to represent the hand and
     the fifth card to represent the cut card:
 
     cribbage score H1 H2 H3 H4 C
 
-    It recognizes the cards as a two letter rank/suit combination. The
-    rank values are:
+    It recognizes the cards as a two letter rank/suit combination.
 
-    - A - Ace
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    - 8
-    - 9
-    - T - Ten
-    - J - Jack
-    - Q - Queen
-    - K - King
+    The rank values are:
 
-    The suit values are represented by the single letter:
-    - D - Diamond
-    - H - Heart
-    - C - Club
-    - S - Spade
+    A (Ace), 2, 3, 4, 5, 6, 7, 8, 9, T (Ten), J (Jack), Q (Queen), K
+    (King)
 
-    So a card, the 10 of hearts would be TH or the Ace of Spades would be AS.
+    The suit values are:
 
-    OPTIONALLY, you can specify the `--crib` or `--dealer` switches to
-    indicate we want to count the hand as a crib hand or a dealer hand.
-    If either of these switches are not specified, then we assume a
-    pone hand.
+    D (Diamond), H (Heart), C (Club), S (Spade)
+
+    So a card, the 10 of hearts would be TH or the Ace of Spades would
+    be AS.
+
+    # Optional
+
+    You can specify the `--crib` or `--dealer` switches to indicate we
+    want to count the hand as a crib hand or a dealer hand. If either
+    of these switches are not specified, then we assume a pone hand.
 
     # NOTE
 
-    You can use lower case letters like `as` and that will work.
+    You can use lower case letters like `as` for the Ace of Spades.
     However, you must specify the rank first and the suit second.
 
-    """
+    # Usage
 
-    ctx = args[0]
-    # config = ctx.obj["config"]
+    $ cribbage score 4H 5D 5C 6S JD
+
+    Hand = ['4H', '5D', '6S', '5C'] Cut = JD
+    -----------------------
+    4 Fifteens for 8
+    1 Pairs for    2
+    2 Runs for     6
+    Flush for      0
+    Nobs for       0
+    Nibs for       0
+    -----------------------
+    Total:         16
+
+    Fifteens:
+
+    1 - ['5D', 'JD']
+    2 - ['5C', 'JD']
+    3 - ['4H', '5D', '6S']
+    4 - ['4H', '6S', '5C']
+
+    Pairs:
+
+    1, ['5D', '5C']
+
+    Runs:
+
+    1 - ['4H', '5D', '6S']
+    2 - ['4H', '5C', '6S']
+
+
+    """
 
     hand = [Card(*c) for c in kwargs['hand']]
     cut = Card(*kwargs['cut'])
 
     hand.sort()
-
-    # click.echo(list(str(c) for c in hand))
-    # click.echo(str(cut))
 
     # Count Everything -
     results = score_hand(
