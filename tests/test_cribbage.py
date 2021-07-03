@@ -680,7 +680,3 @@ def test_score(data):
 
     assert results == right
 
-# -------------
-# Test score_hand
-
-

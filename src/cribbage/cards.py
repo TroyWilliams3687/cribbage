@@ -271,7 +271,7 @@ class Card:
         else:
             return int(self.rank)
 
-    def cool_display(self, display_card=False) -> str:
+    def cool_display(self, display_card=False, **kwargs) -> str:
         """
 
         By default, display a card, 2H like this:
@@ -282,6 +282,9 @@ class Card:
         🂲
 
         """
+
+        if kwargs.get('basic', False):
+            return str(self)
 
         if display_card:
 
@@ -1014,19 +1017,22 @@ def score(values):
     }
 
 
-def score_hand(hand, cut, **kwargs):
+def score_hand(
+    hand, cut,
+    include_nibs=False,
+    five_card_flush=False,
+    **kwargs,
+):
     """
-    Score the pones hand and return a list of strings that can be
-    printed.
+    Score the hand and display the results. by
 
     # Parameters
+
     hand:Hand
         - The hand to score
 
     cut:Card
         - The cut card to score with the hand
-
-    # Parameters (kwargs)
 
     include_nibs:bool
         - Include the calculation of nibs.
@@ -1038,10 +1044,13 @@ def score_hand(hand, cut, **kwargs):
         - Only applied when counting the crib.
         - DEFAULT - False
 
+    # Return
+
+    A list of strings representing the counts
+
     """
 
-    include_nibs = kwargs.get("include_nibs", False)
-    five_card_flush = kwargs.get("five_card_flush", False)
+    basic = kwargs.get('basic', False)
 
     hands = find_combinations(hand, cut)
     hand_scores = score(hands)
@@ -1062,41 +1071,45 @@ def score_hand(hand, cut, **kwargs):
         total += hand_scores["nibs"]
 
     summary = [
-        f"Hand      = {hand.sorted().cool_display()}",
-        f"Cut       = {cut.cool_display()}",
+        f"Hand = {display_hand(hand, cool=(not basic))} Cut = {cut.cool_display(basic=basic)}",
+        "-----------------------",
         f'{len(hands["fifteen"])} Fifteens for {hand_scores["fifteen"]}',
         f'{len(hands["pair"])} Pairs for    {hand_scores["pair"]}',
         f'{len(hands["run"])} Runs for     {hand_scores["run"]}',
         f"Flush for      {flush}",
         f'Nobs for       {hand_scores["nobs"]}',
         f'Nibs for       {hand_scores["nibs"] if include_nibs else 0}',
-        "-----------------",
-        f"Total          {total}",
+        "-----------------------",
+        f"Total:         {total}",
     ]
 
     if hands["fifteen"]:
 
-        items = ["", "Fifteens ===="]
-        for f in hands["fifteen"]:
-            items.append(f"{f.cool_display()} = 15")
+        items = ["", "Fifteens:", ""]
+
+        for i, f in enumerate(hands["fifteen"], start=1):
+            items.append(f"{i} - {display_hand(f, cool=(not basic))}")
 
         summary.extend(items)
 
     if hands["pair"]:
 
-        items = ["", "Pairs ===="]
-        for f in hands["pair"]:
-            items.append(f"{f.cool_display()}")
+        items = ["", "Pairs:", ""]
+
+        for i, f in enumerate(hands["pair"], start=1):
+            items.append(f"{i}, {display_hand(f, cool=(not basic))}")
 
         summary.extend(items)
 
     if hands["run"]:
 
-        items = ["", "Runs ===="]
+        items = ["", "Runs:", ""]
 
-        for f in hands["run"]:
-            items.append(f"{f.cool_display()}")
+        for i, f in enumerate(hands["run"], start=1):
+            items.append(f"{i} - {display_hand(f, cool=(not basic))}")
 
         summary.extend(items)
+
+    summary.append("")
 
     return summary
