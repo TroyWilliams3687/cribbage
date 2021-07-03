@@ -39,6 +39,9 @@ from cribbage.cards import (
     find_flushes,
     find_combinations,
     score,
+)
+
+from cribbage.hands import (
     maximum_four_card_score,
 )
 
