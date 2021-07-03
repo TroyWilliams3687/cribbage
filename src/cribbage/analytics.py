@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 # -----------
 # SPDX-License-Identifier: MIT
@@ -28,6 +28,7 @@ from cribbage.cards import (
     hand_combinations,
     score_hand,
     make_deck,
+    display_hand,
 )
 
 # -------------
@@ -120,4 +121,65 @@ def average_hand_value(hand, discard=None):
 
     total = sum([score_hand(hand, cut) for cut in deck])
 
-    return total/len(deck)
+    return total / len(deck)
+
+
+def best_discard(hand, **kwargs):
+    """
+    Given 6 cards, determine the best 4 card hand by maximizing the
+    expected average value.
+
+
+    # Parameters
+
+    hand:list(Card)
+        - The list of cards to determine the best discard
+        - Expecting 6 cards.
+
+    # Return
+
+    A tuple (int, list(Card), list(Card)), containing the best average,
+    the hand and the discard.
+
+    """
+
+    assert len(hand) == 6
+
+    verbose = kwargs.get('verbose', False)
+    messages = []
+
+    best_average = 0
+    best_hand = None
+    best_discard = None
+
+    for candidate_hand in hand_combinations(hand, combination_length=4):
+
+        # use a set to figure out what cards were discarded
+        discard = list(set(hand) - set(candidate_hand))
+
+        combo_average = average_hand_value(
+            list(candidate_hand),
+            discard,
+        )
+
+        if verbose:
+            #
+            candidate_value = score_hand(list(candidate_hand), None)
+            messages.append(f'Hand = {display_hand(sorted(candidate_hand), cool=True)}, value = {candidate_value}, average = {combo_average:.3f}')
+
+
+        if combo_average > best_average:
+            best_average = combo_average
+            best_hand = candidate_hand
+            best_discard = discard
+
+    results = [best_average, sorted(best_hand), sorted(best_discard)]
+
+    if verbose:
+        results.append(messages)
+
+    return tuple(results)
+
+
+
+

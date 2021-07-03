@@ -44,6 +44,7 @@ from cribbage.cards import (
 from cribbage.analytics import (
     maximum_four_card_score,
     average_hand_value,
+    best_discard,
 )
 
 # -------------
@@ -201,7 +202,7 @@ def test_card_add(data):
 
 data = [
     (("TC", "AS", "3H"), ("3H", "AS", "TC")),
-    (("TC", "AS", "3H", "6C", "4D"), ("3H", "4D", "AS",  "6C", "TC")),
+    (("TC", "AS", "3H", "6C", "4D"), ("3H", "4D", "AS", "6C", "TC")),
 ]
 
 
@@ -247,9 +248,10 @@ def test_make_deck():
 
     assert Card(*"3H") in deck
 
-    assert Card(*'5S') in deck
+    assert Card(*"5S") in deck
 
-    assert Card(*'AS') in deck
+    assert Card(*"AS") in deck
+
 
 def test_make_deck_delete():
 
@@ -518,21 +520,22 @@ def test_find_runs(data):
 # -------------
 # Test find_flushes
 
-left = (("2C", "3C", "4C", "8C"), ('QS'))
+left = (("2C", "3C", "4C", "8C"), ("QS"))
 right = ("2C", "3C", "4C", "8C")
 
 data = [(left, right)]
 
-left = (("2C", "3S", "4C", "8C"), ('TD'))
+left = (("2C", "3S", "4C", "8C"), ("TD"))
 right = ()
 
-data.append((left,right))
+data.append((left, right))
 
 
-left = (("2C", "3S", "4C", "8C"), ('TC'))
-right = ("2C", "4C", "8C", 'TC')
+left = (("2C", "3S", "4C", "8C"), ("TC"))
+right = ("2C", "4C", "8C", "TC")
 
-data.append((left,right))
+data.append((left, right))
+
 
 @pytest.mark.parametrize("data", data)
 def test_find_flushes(data):
@@ -553,41 +556,38 @@ def test_find_flushes(data):
 # Test find_combinations
 
 
-left = (("4C", "5C", "6D", "5S"), ('QS')) # 16 point hand
+left = (("4C", "5C", "6D", "5S"), ("QS"))  # 16 point hand
 right = {
-    'fifteen': [
-        (Card(rank='5', suit='C'), Card(rank='Q', suit='S')),
-        (Card(rank='5', suit='S'), Card(rank='Q', suit='S')),
-        (Card(rank='4', suit='C'), Card(rank='5', suit='C'), Card(rank='6', suit='D')),
-        (Card(rank='4', suit='C'), Card(rank='6', suit='D'), Card(rank='5', suit='S'))
+    "fifteen": [
+        (Card(rank="5", suit="C"), Card(rank="Q", suit="S")),
+        (Card(rank="5", suit="S"), Card(rank="Q", suit="S")),
+        (Card(rank="4", suit="C"), Card(rank="5", suit="C"), Card(rank="6", suit="D")),
+        (Card(rank="4", suit="C"), Card(rank="6", suit="D"), Card(rank="5", suit="S")),
     ],
-    'pair': [
-        (Card(rank='5', suit='C'), Card(rank='5', suit='S'))
+    "pair": [(Card(rank="5", suit="C"), Card(rank="5", suit="S"))],
+    "run": [
+        [Card(rank="4", suit="C"), Card(rank="5", suit="C"), Card(rank="6", suit="D")],
+        [Card(rank="4", suit="C"), Card(rank="5", suit="S"), Card(rank="6", suit="D")],
     ],
-    'run': [
-        [Card(rank='4', suit='C'), Card(rank='5', suit='C'), Card(rank='6', suit='D')],
-        [Card(rank='4', suit='C'), Card(rank='5', suit='S'), Card(rank='6', suit='D')]
-    ],
-    'flush': [],
-    'nobs': [],
-    'nibs': []
+    "flush": [],
+    "nobs": [],
+    "nibs": [],
 }
 
 data = [(left, right)]
 
-left = (("3C", "2S", "6D", "8H"), ('3S')) # 2 point hand
+left = (("3C", "2S", "6D", "8H"), ("3S"))  # 2 point hand
 right = {
-    'fifteen': [],
-    'pair': [
-        (Card(rank='3', suit='C'), Card(rank='3', suit='S'))
-    ],
-    'run': [],
-    'flush': [],
-    'nobs': [],
-    'nibs': []
+    "fifteen": [],
+    "pair": [(Card(rank="3", suit="C"), Card(rank="3", suit="S"))],
+    "run": [],
+    "flush": [],
+    "nobs": [],
+    "nibs": [],
 }
 
-data.append((left,right))
+data.append((left, right))
+
 
 @pytest.mark.parametrize("data", data)
 def test_find_combinations(data):
@@ -601,93 +601,95 @@ def test_find_combinations(data):
 
     assert results == right
 
+
 # -------------
 # Test score
 
-left = (("4C", "5C", "6D", "5S"), ('QS')) # 16 point hand
+left = (("4C", "5C", "6D", "5S"), ("QS"))  # 16 point hand
 right = {
-    'fifteen':8,
-    'pair':   2,
-    'run':    6,
-    'flush':  0,
-    'nobs':   0,
-    'nibs':   0,
+    "fifteen": 8,
+    "pair": 2,
+    "run": 6,
+    "flush": 0,
+    "nobs": 0,
+    "nibs": 0,
 }
 
 data = [(left, right)]
 
-left = (("3C", "2S", "6D", "8H"), ('3S')) # 2 point hand
+left = (("3C", "2S", "6D", "8H"), ("3S"))  # 2 point hand
 right = {
-    'fifteen':0,
-    'pair':   2,
-    'run':    0,
-    'flush':  0,
-    'nobs':   0,
-    'nibs':   0,
+    "fifteen": 0,
+    "pair": 2,
+    "run": 0,
+    "flush": 0,
+    "nobs": 0,
+    "nibs": 0,
 }
 
-data.append((left,right))
+data.append((left, right))
 
-left = (("3C", "2S", "TD", "8H"), ('6S'))
+left = (("3C", "2S", "TD", "8H"), ("6S"))
 right = {
-    'fifteen':2,
-    'pair':   0,
-    'run':    0,
-    'flush':  0,
-    'nobs':   0,
-    'nibs':   0,
+    "fifteen": 2,
+    "pair": 0,
+    "run": 0,
+    "flush": 0,
+    "nobs": 0,
+    "nibs": 0,
 }
 
-data.append((left,right))
+data.append((left, right))
 
-left = (("3C", "2S", "AS", "7H"), ('9S'))
+left = (("3C", "2S", "AS", "7H"), ("9S"))
 right = {
-    'fifteen':2,
-    'pair':   0,
-    'run':    3,
-    'flush':  0,
-    'nobs':   0,
-    'nibs':   0,
+    "fifteen": 2,
+    "pair": 0,
+    "run": 3,
+    "flush": 0,
+    "nobs": 0,
+    "nibs": 0,
 }
 
-data.append((left,right))
+data.append((left, right))
 
 
-left = (("3C", "TC", "AC", "8C"), ('KS'))
+left = (("3C", "TC", "AC", "8C"), ("KS"))
 right = {
-    'fifteen':0,
-    'pair':   0,
-    'run':    0,
-    'flush':  4,
-    'nobs':   0,
-    'nibs':   0,
+    "fifteen": 0,
+    "pair": 0,
+    "run": 0,
+    "flush": 4,
+    "nobs": 0,
+    "nibs": 0,
 }
 
-data.append((left,right))
+data.append((left, right))
 
-left = (("3C", "TC", "JS", "8C"), ('6S'))
+left = (("3C", "TC", "JS", "8C"), ("6S"))
 right = {
-    'fifteen':0,
-    'pair':   0,
-    'run':    0,
-    'flush':  0,
-    'nobs':   1,
-    'nibs':   0,
+    "fifteen": 0,
+    "pair": 0,
+    "run": 0,
+    "flush": 0,
+    "nobs": 1,
+    "nibs": 0,
 }
 
-data.append((left,right))
+data.append((left, right))
 
-left = (("3C", "TC", "KS", "8C"), ('JS'))
+left = (("3C", "TC", "KS", "8C"), ("JS"))
 right = {
-    'fifteen':0,
-    'pair':   0,
-    'run':    0,
-    'flush':  0,
-    'nobs':   0,
-    'nibs':   2,
+    "fifteen": 0,
+    "pair": 0,
+    "run": 0,
+    "flush": 0,
+    "nobs": 0,
+    "nibs": 2,
 }
 
-data.append((left,right))
+data.append((left, right))
+
 
 @pytest.mark.parametrize("data", data)
 def test_score(data):
@@ -701,18 +703,19 @@ def test_score(data):
 
     assert results == right
 
+
 # -------------
 # Test maximum_four_card_score
 
-left = ("4C", "5C", "6D", "5S", 'QS', "AD")
+left = ("4C", "5C", "6D", "5S", "QS", "AD")
 right = (12, ("6D", "5S", "4C", "5C"))
 
 data = [(left, right)]
 
 
-left = ("3S", "8D", "TH", "QS", 'JD', "AD")
+left = ("3S", "8D", "TH", "QS", "JD", "AD")
 right = (3, ("TH", "JD", "3S", "QS"))
-data.append((left,right))
+data.append((left, right))
 
 
 @pytest.mark.parametrize("data", data)
@@ -727,23 +730,27 @@ def test_maximum_four_card_score(data):
 
     assert all(str(u) == v for u, v in zip(hand, right[1]))
 
+
 # ------------
 # average_hand
 
 
-left = (('3H','4D','5D','5S'),('JS','2C'))
+left = (("3H", "4D", "5D", "5S"), ("JS", "2C"))
 right = 12.478
 
 data = [(left, right)]
 
-left = (('4H', '5D', '5C', '6S'), None)
+left = (("4H", "5D", "5C", "6S"), None)
 right = 15.958
-data.append((left,right))
+data.append((left, right))
 
-
-left = (('6C', 'KS', '8S', '5C'), ("4S", 'QH'))
+left = (("6C", "KS", "8S", "5C"), ("4S", "QH"))
 right = 4.63
-data.append((left,right))
+data.append((left, right))
+
+left = (("3C", "4D", "5H", "5C"), ("2C", "JC"))
+right = 12.478
+
 
 @pytest.mark.parametrize("data", data)
 def test_maximum_average_hand(data):
@@ -755,4 +762,34 @@ def test_maximum_average_hand(data):
 
     average_value = average_hand_value(cards, discard)
 
-    assert pytest.approx(average_value, rel=1E-4, abs=1E-12) == right
+    assert pytest.approx(average_value, rel=1e-4, abs=1e-12) == right
+
+
+# -------------
+# best_discard
+
+
+left = ('KH', '7D', '9D', 'AD', '8C', 'JD')
+right = (7.8913, ('AD', '7D','9D', '8C'), ('KH', 'JD'))
+data = [(left, right)]
+
+left = ('4C', '5D', 'QH', 'QC', 'AC', 'AD')
+right = (9.304,  ('AD', 'AC', '4C', 'QC'), ('QH', '5D'))
+data.append((left, right))
+
+@pytest.mark.parametrize("data", data)
+def test_best_discard(data):
+
+    left, right = data
+
+    cards = [Card(*c) for c in left]
+
+    average_value, hand, discard = best_discard(cards)
+
+    print(hand)
+    print(discard)
+
+    assert pytest.approx(average_value, rel=1e-4, abs=1e-12) == right[0]
+
+    assert all(str(u) == v for u, v in zip(hand, right[1]))
+    assert all(str(u) == v for u, v in zip(discard, right[2]))

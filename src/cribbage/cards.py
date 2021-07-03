@@ -764,7 +764,9 @@ def find_combinations(hand, cut):
         "pair": list(find_pairs(full_hand)),
         "run": list(find_runs(full_hand)),
         "flush": find_flushes(hand, cut),
-        "nobs": [c for c in hand if c.suit == cut.suit and c.rank == "J"] if cut else [],
+        "nobs": [c for c in hand if c.suit == cut.suit and c.rank == "J"]
+        if cut
+        else [],
         "nibs": [cut] if cut and cut.rank == "J" else [],
     }
 
@@ -871,6 +873,7 @@ def score_hand(
 
     return total
 
+
 def score_hand_breakdown(
     hand,
     cut,
@@ -968,4 +971,3 @@ def score_hand_breakdown(
     summary.append("")
 
     return summary
-

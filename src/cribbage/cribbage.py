@@ -37,6 +37,7 @@ from .cards import (
 
 from .analytics import (
     average_hand_value,
+    best_discard,
 )
 
 # ------------
@@ -179,6 +180,7 @@ def score(*args, **kwargs):
     click.echo()
     click.echo("\n".join(results))
 
+
 @main.command("average")
 @click.argument(
     "hand",
@@ -204,7 +206,7 @@ def average(*args, **kwargs):
     otherwise an error will be raised.
 
     Optionally, you can specify any number of `discard` cards, separated
-    by spaces,. The discards are cards that you know cannot turn up as
+    by spaces. The discards are cards that you know cannot turn up as
     a cut card because they are not in the deck. Typically, you will
     specify the 2 cards you want to discard to the crib. In reality, it
     is simply a list of cards that you know cannot appear as cut
@@ -214,12 +216,21 @@ def average(*args, **kwargs):
 
     $ cribbage average 4H 5D 5C 6S
 
+    Hand = ['4♥', '5♦', '5♣', '6♠']
+    Average Value = 15.96
+
+    $ cribbage average 3H 4D 5D 5S JS 2C
+
+    Hand = ['3♥', '4♦', '5♦', '5♠']
+    Discard = ['J♠', '2♣']
+    Average Value = 12.48
     """
 
     hand = [Card(*c) for c in kwargs["hand"]]
     discard = [Card(*c) for c in kwargs["discard"]]
 
     hand_average = average_hand_value(hand, discard)
+    hand_value = score_hand(hand, None)
 
     click.echo()
     click.echo(f"Hand = {display_hand(hand, cool=True)}")
@@ -227,5 +238,59 @@ def average(*args, **kwargs):
     if discard:
         click.echo(f"Discard = {display_hand(discard, cool=True)}")
 
-    click.echo(f"Average Value = {hand_average:.2f}")
+
+    click.echo(f"Value = {hand_value}")
+    click.echo(f"Average Value = {hand_average:.3f}")
+
+
+@main.command("discard")
+@click.argument(
+    "hand",
+    nargs=6,
+    type=str,
+)
+@click.option(
+    "--verbose",
+    is_flag=True,
+    help="Display more information about the process",
+)
+@click.pass_context
+def discard(*args, **kwargs):
+    """
+
+    Given 6 cards in your hand, determine the best 2 cards to discard by
+    keeping the 4 cards that will yield the highest expected average
+    value.
+
+    # Usage
+
+    $ cribbage discard 3H 4D 5D 5S JS 2C
+
+    $ cribbage discard KH 7D 9D AD 8C JD --verbose
+
+    """
+
+    cards = [Card(*c) for c in kwargs["hand"]]
+
+    result = best_discard(cards,verbose=kwargs['verbose'])
+
+
+    hand_average = result[0]
+    hand = result[1]
+    discard = result[2]
+
+    hand_value = score_hand(hand, None)
+
     click.echo()
+    click.echo(f"Hand = {display_hand(hand, cool=True)}")
+    click.echo(f"Discard = {display_hand(discard, cool=True)}")
+    click.echo(f"Value = {hand_value}")
+    click.echo(f"Average Value = {hand_average:.3f}")
+
+
+    if kwargs['verbose']:
+
+        for row in result[3]:
+            click.echo(row)
+
+        click.echo()
