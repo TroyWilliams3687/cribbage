@@ -817,6 +817,68 @@ def score_hand(
     **kwargs,
 ):
     """
+    Score the hand returning the result
+
+    # Parameters
+
+    hand:Hand
+        - The hand to score
+
+    cut:Card
+        - The cut card to score with the hand
+
+    include_nibs:bool
+        - Include the calculation of nibs.
+        - Only dealer can claim this.
+        - DEFAULT - False
+
+    five_card_flush:bool
+        - Only count the flush if it is 5 cards.
+        - Only applied when counting the crib.
+        - DEFAULT - False
+
+    # Return
+
+    An integer represent the score of the hand.
+
+    # NOTE
+
+    If you are interested in a summary breaking the score down, use
+    `score_hand_breakdown` method which return a list of strings
+    breaking the score down.
+
+    """
+
+    basic = kwargs.get("basic", False)
+
+    hands = find_combinations(hand, cut)
+    hand_scores = score(hands)
+
+    # Flush is worth 5 points and only 5 points if we are counting the
+    # crib (4 crib cards + cut). If we are not counting the crib we can
+    # use the value of hand_scores directly.
+    flush = 5 if hand_scores["flush"] == 5 and five_card_flush else hand_scores["flush"]
+
+    # calculate the total excluding the nibs and flush
+    total = sum([v for k, v in hand_scores.items() if k not in ["nibs", "flush"]])
+
+    # add the flush separately based on the flush calculation above.
+    total += flush
+
+    # Are we counting the dealer hand?
+    if include_nibs:
+        total += hand_scores["nibs"]
+
+    return total
+
+def score_hand_breakdown(
+    hand,
+    cut,
+    include_nibs=False,
+    five_card_flush=False,
+    **kwargs,
+):
+    """
     Score the hand and display the results. by
 
     # Parameters
@@ -905,7 +967,8 @@ def score_hand(
 
     summary.append("")
 
-    return total, summary
+    return summary
+
 
 def maximum_hand_value(hand):
     """

@@ -30,6 +30,7 @@ import click
 
 from .cards import (
     score_hand,
+    score_hand_breakdown,
     Card,
 )
 
@@ -162,7 +163,7 @@ def score(*args, **kwargs):
     hand.sort()
 
     # Count Everything -
-    total, results = score_hand(
+    results = score_hand_breakdown(
         hand,
         cut,
         include_nibs=kwargs["dealer"],
