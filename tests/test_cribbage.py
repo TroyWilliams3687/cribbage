@@ -199,8 +199,8 @@ def test_card_add(data):
 
 
 data = [
-    (("TC", "AS", "3H"), ("AS", "3H", "TC")),
-    (("TC", "AS", "3H", "6C", "4D"), ("AS", "3H", "4D", "6C", "TC")),
+    (("TC", "AS", "3H"), ("3H", "AS", "TC")),
+    (("TC", "AS", "3H", "6C", "4D"), ("3H", "4D", "AS",  "6C", "TC")),
 ]
 
 
@@ -238,13 +238,18 @@ def test_card_exception(data):
 # Test make_deck
 
 
-def test_card_sort():
+def test_make_deck():
 
     deck = make_deck()
 
     assert len(deck) == 52
 
     assert Card(*"3H") in deck
+
+    assert Card(*'5S') in deck
+
+    assert Card(*'AS') in deck
+
 
 
 # -------------

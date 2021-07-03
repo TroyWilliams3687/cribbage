@@ -12,8 +12,7 @@
 # -----------
 
 """
-This is a template python script for use in creating other classes and applying
-a standard to them
+A module containing advanced methods for the game of cribbage
 """
 
 # ------------
