@@ -32,6 +32,11 @@ from .cards import (
     score_hand,
     score_hand_breakdown,
     Card,
+    display_hand,
+)
+
+from .analytics import (
+    average_hand_value,
 )
 
 # ------------
@@ -173,3 +178,54 @@ def score(*args, **kwargs):
 
     click.echo()
     click.echo("\n".join(results))
+
+@main.command("average")
+@click.argument(
+    "hand",
+    nargs=4,
+    type=str,
+)
+@click.argument(
+    "discard",
+    nargs=-1,
+    type=str,
+)
+@click.pass_context
+def average(*args, **kwargs):
+    """
+
+    Takes 4 cards as a hand and computes the average value of that hand.
+    It uses the fact that the 4 cards in the hand cannot appear as cut
+    cards. It proceed to calculate the hand value of every combination
+    of hand and cut card. From there it can determine the average value
+    of the hand.
+
+    You need to specify 4 cards (separated by spaces) for your hand
+    otherwise an error will be raised.
+
+    Optionally, you can specify any number of `discard` cards, separated
+    by spaces,. The discards are cards that you know cannot turn up as
+    a cut card because they are not in the deck. Typically, you will
+    specify the 2 cards you want to discard to the crib. In reality, it
+    is simply a list of cards that you know cannot appear as cut
+    cards.
+
+    # Usage
+
+    $ cribbage average 4H 5D 5C 6S
+
+    """
+
+    hand = [Card(*c) for c in kwargs["hand"]]
+    discard = [Card(*c) for c in kwargs["discard"]]
+
+    hand_average = average_hand_value(hand, discard)
+
+    click.echo()
+    click.echo(f"Hand = {display_hand(hand, cool=True)}")
+
+    if discard:
+        click.echo(f"Discard = {display_hand(discard, cool=True)}")
+
+    click.echo(f"Average Value = {hand_average:.2f}")
+    click.echo()

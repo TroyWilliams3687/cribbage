@@ -41,8 +41,9 @@ from cribbage.cards import (
     score,
 )
 
-from cribbage.hands import (
+from cribbage.analytics import (
     maximum_four_card_score,
+    average_hand_value,
 )
 
 # -------------
@@ -250,6 +251,17 @@ def test_make_deck():
 
     assert Card(*'AS') in deck
 
+def test_make_deck_delete():
+
+    deck = make_deck()
+    assert len(deck) == 52
+
+    c = Card(*"3H")
+    assert c in deck
+
+    deck.remove(c)
+    assert len(deck) == 51
+    assert c not in deck
 
 
 # -------------
@@ -714,3 +726,33 @@ def test_maximum_four_card_score(data):
     assert max_score == right[0]
 
     assert all(str(u) == v for u, v in zip(hand, right[1]))
+
+# ------------
+# average_hand
+
+
+left = (('3H','4D','5D','5S'),('JS','2C'))
+right = 12.478
+
+data = [(left, right)]
+
+left = (('4H', '5D', '5C', '6S'), None)
+right = 15.958
+data.append((left,right))
+
+
+left = (('6C', 'KS', '8S', '5C'), ("4S", 'QH'))
+right = 4.63
+data.append((left,right))
+
+@pytest.mark.parametrize("data", data)
+def test_maximum_average_hand(data):
+
+    left, right = data
+
+    cards = [Card(*c) for c in left[0]]
+    discard = [Card(*c) for c in left[1]] if left[1] else None
+
+    average_value = average_hand_value(cards, discard)
+
+    assert pytest.approx(average_value, rel=1E-4, abs=1E-12) == right
