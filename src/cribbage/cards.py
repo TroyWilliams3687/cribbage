@@ -283,7 +283,7 @@ class Card:
 
         """
 
-        if kwargs.get('basic', False):
+        if kwargs.get("basic", False):
             return str(self)
 
         if display_card:
@@ -358,180 +358,6 @@ def make_deck():
     """
 
     return [Card(*p) for p in product(RANKS, SUITS)]
-
-
-# class Hand(MutableSequence):
-#     """
-#     A hand is a simple container for a number of cards.
-
-
-#     https://docs.python.org/3/reference/datamodel.html
-#     https://docs.python.org/3/library/collections.abc.html
-#     https://treyhunner.com/2019/04/why-you-shouldnt-inherit-from-list-and-dict-in-python/
-
-#     """
-
-#     def __init__(self, *args):
-
-#         if len(args) > 0:
-#             if len(set(*args)) != len(*args):
-#                 raise ValueError('Duplicate cards are not allowed!')
-
-#         self.values = list(*args)
-
-#         # list.__init__(self, *args)
-
-#     def __getitem__(self, key):
-#         return self.values[key]
-
-#     def __setitem__(self, key, value):
-#         self.values[key] = value
-
-#     def __delitem__(self, key):
-#         del self.values[key]
-
-#     def __len__(self):
-#         return len(self.values)
-
-#     def __eq__(self, other):
-#         return self.values == other
-
-#     def __str__(self):
-#         return self.values.__str__()
-
-#     def __repr__(self):
-#         return self.values.__repr__()
-
-#     def insert(self, key, value):
-#         self.insert(key, value)
-
-#     def display(self):
-#         """
-
-#         Return a list of strings representing the cards in the hand.
-
-#         [AD, 1D, 3S, 4C]
-
-#         """
-
-#         return [str(c) for c in self]
-
-#     def cool_display(self):
-#         """
-#         Return a list of strings representing the cards in the hand
-#         using unicode characters to represent the suits.
-
-#         [A♦, 1♦, 3♠, 4♣]
-#         """
-#         return [c.cool_display() for c in self]
-
-#     def value(self):
-#         """
-
-#         Return the total value of the hand summing each individual card
-#         value.
-
-#         # NOTE
-
-#         If the hand is empty, by default the sum function returns 0.
-
-#         """
-
-#         return sum([c.value() for c in self])
-
-#     def sort(self, key=None, reverse=False):
-#         """
-#         Return a new Hand list in sorted order.
-
-#         The new order will account for the rank of the card.
-
-#         Given:
-
-#         [AD, 4D, 6S, 4C]
-
-#         Returns:
-
-#         [AD, 4C, 4D, 6S]
-
-#         # NOTE
-
-#         It may be more preferable to sort from lowest to highest and
-#         group-by suit. That is make sure that all diamonds are
-#         consecutive.
-
-#         """
-
-#         self.values.sort(key=key, reverse=reverse)
-
-#     def every_combination(self, **kwargs):
-#         """
-
-#         Iterate through every combination of cards from 0 to len
-#         (self) yielding the result as it is created.
-
-#         This is a generator method. It will iterate through all the single
-#         cards, than pairs than triples etc.
-
-#         Optionally, you can specify a `count` and limit the return
-#         values to hands of that length. For example if count=2, then
-#         all 2 card combinations are returned.
-
-#         # Parameters (kwargs)
-
-#         count:int
-#             - The number of cards to take.
-
-#         # Return
-
-#         A Hand containing the cards in the combination.
-
-#         """
-
-#         if 'count' in kwargs:
-#             # From this hand, generate a list of all hands of length
-#             # count
-
-#             # If count = 2 and m = [x,y,z,w]
-
-#             # >>>from itertools import combinations
-#             # >>> m = ['x', 'y', 'z', 'w']
-#             # >>> [c for c in combinations(m,2)]
-#             # [('x', 'y'), ('x', 'z'), ('x', 'w'),
-#             #  ('y', 'z'), ('y', 'w'), ('z', 'w')]
-
-#             for combo in combinations(self, kwargs['count']):
-#                 yield Hand(combo)
-
-#         else:
-
-#             # Generate all possible combinations of Hands from 0 to n
-
-#             # if the hand count is 4, it will generate 16 hands.
-
-#             # >>> from itertools import chain
-#             # >>> from itertools import combinations
-#             # >>> m = ['x', 'y', 'z', 'w']
-#             # >>> [r for r in range(len(m) + 1)]
-#             # [0, 1, 2, 3, 4]
-#             # >>> [c for c in chain.from_iterable(
-#             #   combinations(m, r) for r in range(len(m) + 1))]
-#             # [(), ('x',), ('y',), ('z',), ('w',), ('x', 'y'),
-#             #  ('x', 'z'), ('x', 'w'), ('y', 'z'), ('y', 'w'), ('z', 'w'),
-#             #  ('x', 'y', 'z'), ('x', 'y', 'w'), ('x', 'z', 'w'),
-#             #  ('y', 'z', 'w'), ('x', 'y', 'z', 'w')]
-
-#             for combo in chain.from_iterable(
-#                 combinations(self, r) for r in range(len(self) + 1)
-#             ):
-#                 yield Hand(combo)
-
-
-# def hand_duplicates(hand):
-#     """
-#     """
-
-#     if len(set(hand)) != len(hand):
-#         raise ValueError('Duplicate cards are not allowed!')
 
 
 def display_hand(hand, cool=False, super_cool=False):
@@ -668,39 +494,6 @@ def hand_combinations(hand, combination_length=None):
             combinations(hand, r) for r in range(len(hand) + 1)
         ):
             yield combo
-
-
-# def deal_hand(deck, count):
-#     """
-#     Deals a hand with `count` cards from the deck. The dealt cards are
-#     removed from the deck.
-
-#     # Parameters
-
-#     deck:list[Card]
-#         - A list of cards
-
-#     count:int
-#         - The number cards to deal to form a hand.
-
-
-#     # NOTE
-
-#     The cards will be automatically removed from the deck
-
-#     This has to be revised - we don't deal 5 cards to the pone
-#     and then 5 cards to the dealer. They are dealt alternating
-#     starting with the pones hand, then the dealer, back and forth.
-
-#     May need to implment fisher-yates algorithm
-#         - https://emctackett.medium.com/fisher-yates-shuffle-randomly-shuffle-a-list-in-place-30a05b05a9cb
-
-#     """
-
-#     hand = Hand(deck[:count])
-#     del deck[:count]
-
-#     return hand
 
 
 def find_fifteens(hand):
@@ -882,9 +675,9 @@ def find_flushes(hand, cut):
     # cut card forming a flush?
 
     for k, g in groupby(
-            sorted(hand, key=lambda x: SUIT_SORT[x.suit]),
-            lambda x: SUIT_SORT[x.suit],
-        ):
+        sorted(hand, key=lambda x: SUIT_SORT[x.suit]),
+        lambda x: SUIT_SORT[x.suit],
+    ):
 
         values = list(g)
 
@@ -909,7 +702,6 @@ def find_flushes(hand, cut):
             continue
 
     return []
-
 
 
 def find_combinations(hand, cut):
@@ -1018,7 +810,8 @@ def score(values):
 
 
 def score_hand(
-    hand, cut,
+    hand,
+    cut,
     include_nibs=False,
     five_card_flush=False,
     **kwargs,
@@ -1050,7 +843,7 @@ def score_hand(
 
     """
 
-    basic = kwargs.get('basic', False)
+    basic = kwargs.get("basic", False)
 
     hands = find_combinations(hand, cut)
     hand_scores = score(hands)

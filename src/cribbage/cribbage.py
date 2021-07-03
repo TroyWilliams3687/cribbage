@@ -57,6 +57,7 @@ def main(*args, **kwargs):
     ctx = args[0]
     ctx.ensure_object(dict)
 
+
 # -----------
 # Add the child menu options
 
@@ -75,11 +76,13 @@ def main(*args, **kwargs):
     is_flag=True,
     help="Count the cards assuming this is a dealers hand.",
 )
-@click.argument('hand',
+@click.argument(
+    "hand",
     nargs=4,
     type=str,
 )
-@click.argument('cut',
+@click.argument(
+    "cut",
     nargs=1,
     type=str,
 )
@@ -153,8 +156,8 @@ def score(*args, **kwargs):
 
     """
 
-    hand = [Card(*c) for c in kwargs['hand']]
-    cut = Card(*kwargs['cut'])
+    hand = [Card(*c) for c in kwargs["hand"]]
+    cut = Card(*kwargs["cut"])
 
     hand.sort()
 
@@ -162,8 +165,8 @@ def score(*args, **kwargs):
     results = score_hand(
         hand,
         cut,
-        include_nibs=kwargs['dealer'],
-        five_card_flush=kwargs['crib'],
+        include_nibs=kwargs["dealer"],
+        five_card_flush=kwargs["crib"],
         basic=True,
     )
 
