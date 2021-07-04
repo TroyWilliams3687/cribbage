@@ -75,25 +75,27 @@ def maximum_four_card_score(hand):
 def expected_average(hand, discard=None):
     """
 
-    Given a four card hand, what is the average hand value? That is,
-    given the rest of the deck, how much on average is the hand worth
-    with any particular cut card left in the deck.
+    Given a four card hand, what is the expected average hand value?
+    That is, given the rest of the deck, how much on average is the
+    hand worth with any particular cut card left in the deck.
 
-    We will take the 4 cards in the hand and calculate all of the
-    possible hands that include the cut cards that are left in the
-    deck.
+    <https://en.wikipedia.org/wiki/Expected_value>
+
+    We take the 4 cards in the hand and calculate all of the possible
+    hands that include the cut cards that are left in the deck.
 
     Essentially, we are assuming that any of the remaining cards could
     be a cut card. We sum the the individual hand values and divide by
-    the number of cards remaining in the deck. This yields the average
-    hand value.
+    the number of cards remaining in the deck. This yields the expected
+    average value of the hand.
 
     If you want to look at what your discard options could be when dealt
     the 6 card starting hand, you can specify your hand and your
     discard cards.
 
     The list of discarded cards is a list of cards that you know are not
-    in the deck and cannot possible show up as a cut card.
+    in the deck and cannot possible show up as a cut card. These cards
+    will be removed from the expected average calculation.
 
     # Parameter
 
