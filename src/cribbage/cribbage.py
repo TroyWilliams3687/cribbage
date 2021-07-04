@@ -37,6 +37,7 @@ from .cards import (
 
 from .analytics import (
     expected_average,
+    expected_average_crib,
     discard_max_hand_value,
 )
 
@@ -278,19 +279,22 @@ def discard(*args, **kwargs):
     hand_average = result['best_average']
     hand_value = score_hand(hand, None)
 
+    average_crib_value = expected_average_crib(hand, discard)
+
     click.echo()
     click.echo(f"Hand = {display_hand(hand, cool=True)}")
     click.echo(f"Discard = {display_hand(discard, cool=True)}")
     click.echo(f"Value = {hand_value}")
-    click.echo(f"Average Value = {hand_average:.3f}")
-
+    click.echo(f"Average Hand Value = {hand_average:.3f}")
+    click.echo(f"Average Crib Value = {average_crib_value:.3f}")
 
     if kwargs['verbose']:
+        click.echo()
 
         for row in result['messages']:
             click.echo(row)
 
-        click.echo()
+    click.echo()
 
     # Include the average value of the crib for the optimal discard
     # use tqdm as a progress bar
