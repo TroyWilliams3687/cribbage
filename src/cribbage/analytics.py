@@ -125,6 +125,71 @@ def expected_average(hand, discard=None):
 
     return total / len(deck)
 
+def expected_average_crib(hand, discard):
+    """
+    Given the 4 card hand and the 2 card discard, calculate the expected
+    crib average value by iterating through rest of the cards in the
+    deck forming cribs with the discard. Take the average of all of the
+    expected_averages of these cribs. This will yield the expected crib
+    average
+
+    1. Creating a deck of cards and removing the 6 cards from the
+    initial hand
+
+    2. Iterate through all 2 card combinations left within the deck
+
+    3. Combine the 2 cards with the discarded cards to form the crib
+
+    4. calculated the expected average of the crib combination - use the
+    hand of cards that we keep as the discard to the method
+    expected_average
+
+    5. accumulate the average crib values and the total number of cribs
+    considered
+
+    6. divide the total by the number of crib hands to determine the
+    crib average
+
+    """
+
+    # hand = [Card(*'7D'), Card(*'9D'), Card(*'8C'), Card(*'JD')]
+    # discard = [Card(*'KH'), Card(*'AD')]
+
+    cards = hand + discard
+
+    # remove the cards from the deck, this one will be for determining
+    # the two cards to finish the crib
+    deck = [c for c in make_deck() if c not in cards]
+
+
+    total = 0
+    count = 0
+    # iterate through every two card combination left in the deck so we can form a crib
+    for i, right in enumerate(hand_combinations(deck, combination_length=2), start = 1):
+        count += 1
+        crib = discard + list(right)
+
+        # use the hand as the discard i.e. we know about those values
+        hand_average = expected_average(crib, hand)
+        # print(f'{i:>3} Crib = {display_hand(crib, cool=True)} = {hand_average:.3f}')
+
+        total += hand_average
+
+    return total/count
+
+    # print('---------------')
+    # print(f"Dealt   = {display_hand(cards, cool=True)}")
+    # print(f"Hand    = {display_hand(hand, cool=True)}")
+    # print(f"Discard = {display_hand(discard, cool=True)}")
+
+    # hand_average = expected_average(hand, discard)
+    # hand_value = score_hand(hand, None)
+
+    # print(f"Hand Value = {hand_value}")
+    # print(f"Average Value = {hand_average:.3f}")
+
+    # print(f'Crib Average = {crib_average:.3f}')
+
 
 def discard_max_hand_value(hand, **kwargs):
     """
@@ -169,7 +234,7 @@ def discard_max_hand_value(hand, **kwargs):
         )
 
         candidate_value = score_hand(list(candidate_hand), None)
-        messages.append(f'{i} Hand = {display_hand(sorted(candidate_hand), cool=True)}, value = {candidate_value}, average = {combo_average:.3f}')
+        messages.append(f'{i:>2} Hand = {display_hand(sorted(candidate_hand), cool=True)}, value = {candidate_value}, average = {combo_average:.3f}')
 
         if combo_average > results['best_average']:
             results['best_average'] = combo_average
