@@ -291,3 +291,6 @@ def discard(*args, **kwargs):
             click.echo(row)
 
         click.echo()
+
+    # Include the average value of the crib for the optimal discard
+    # use tqdm as a progress bar

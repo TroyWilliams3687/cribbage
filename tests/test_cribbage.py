@@ -44,6 +44,7 @@ from cribbage.analytics import (
     maximum_four_card_score,
     expected_average,
     discard_max_hand_value,
+    expected_average_crib,
 )
 
 # -------------
@@ -793,3 +794,36 @@ def test_best_discard(data):
 
     assert all(str(u) == v for u, v in zip(hand, right[1]))
     assert all(str(u) == v for u, v in zip(discard, right[2]))
+
+
+# ------------
+# expected_average_crib
+
+left = (("4C", "5C", "6D", "5S"), ("QS", 'KS'))
+right = 4.0415
+
+data = [(left, right)]
+
+left = (("3C", "2S", "6D", "8H"), ("3S", '4D'))
+right = 5.25955
+
+data.append((left, right))
+
+left = (("3C", "2S", "TD", "8H"), ("6S", '8S'))
+right = 5.401844
+
+data.append((left, right))
+
+@pytest.mark.parametrize("data", data)
+def test_expected_average_crib(data):
+
+    left, right = data
+
+    hand_left, discard_left = left
+
+    hand = [Card(*c) for c in hand_left]
+    discard = cards = [Card(*c) for c in discard_left]
+
+    average_value = expected_average_crib(hand, discard)
+
+    assert pytest.approx(average_value, rel=1e-6, abs=1e-12) == right

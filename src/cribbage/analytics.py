@@ -18,6 +18,9 @@ A module containing advanced methods for the game of cribbage
 # ------------
 # System Modules - Included with Python
 
+from multiprocessing import Pool
+from functools import partial
+
 # ------------
 # 3rd Party - From pip
 
@@ -125,6 +128,28 @@ def expected_average(hand, discard=None):
 
     return total / len(deck)
 
+
+def _calc_crib_average(pair, discard=None, base_cards=None):
+    """
+    Form a crib hand from the two base_cards and the cards in the pair.
+    Provide discard cards to get a better estimate of the average.
+
+    Returns the result
+
+    This is for multiprocessing in the expected_average_crib method.
+
+    """
+
+    assert len(base_cards) == 2
+    assert len(pair) == 2
+
+    crib = base_cards + list(pair)
+
+    # use the hand as the discard i.e. we know about those values
+    hand_average = expected_average(crib, discard)
+
+    return hand_average
+
 def expected_average_crib(hand, discard):
     """
     Given the 4 card hand and the 2 card discard, calculate the expected
@@ -150,45 +175,36 @@ def expected_average_crib(hand, discard):
     6. divide the total by the number of crib hands to determine the
     crib average
 
+    # Parameters
+
+    hand:list(Card)
+        - The list of 4 cards of the hand we want to keep
+
+
+    discard:list(Card)
+        - A list of 2 cards we are discarding to the crib
+
+    # Return
+
+    The expected average value of the crib formed by the discarded cards.
+
     """
 
-    # hand = [Card(*'7D'), Card(*'9D'), Card(*'8C'), Card(*'JD')]
-    # discard = [Card(*'KH'), Card(*'AD')]
+    assert len(hand) == 4
+    assert len(discard) == 2
 
-    cards = hand + discard
+    deck = [c for c in make_deck() if c not in hand + discard]
 
-    # remove the cards from the deck, this one will be for determining
-    # the two cards to finish the crib
-    deck = [c for c in make_deck() if c not in cards]
+    # The discarded cards will form the crib We assign the hand to the
+    # discard so that the method knows what other cards to remove from
+    # the deck to get an accurate average.
+    fn = partial(_calc_crib_average, discard=hand, base_cards=discard)
 
+    # Use max cores
+    with Pool(processes=None) as p:
+        crib_averages = p.map(fn, hand_combinations(deck, combination_length=2))
 
-    total = 0
-    count = 0
-    # iterate through every two card combination left in the deck so we can form a crib
-    for i, right in enumerate(hand_combinations(deck, combination_length=2), start = 1):
-        count += 1
-        crib = discard + list(right)
-
-        # use the hand as the discard i.e. we know about those values
-        hand_average = expected_average(crib, hand)
-        # print(f'{i:>3} Crib = {display_hand(crib, cool=True)} = {hand_average:.3f}')
-
-        total += hand_average
-
-    return total/count
-
-    # print('---------------')
-    # print(f"Dealt   = {display_hand(cards, cool=True)}")
-    # print(f"Hand    = {display_hand(hand, cool=True)}")
-    # print(f"Discard = {display_hand(discard, cool=True)}")
-
-    # hand_average = expected_average(hand, discard)
-    # hand_value = score_hand(hand, None)
-
-    # print(f"Hand Value = {hand_value}")
-    # print(f"Average Value = {hand_average:.3f}")
-
-    # print(f'Crib Average = {crib_average:.3f}')
+    return sum(crib_averages)/len(crib_averages)
 
 
 def discard_max_hand_value(hand, **kwargs):
