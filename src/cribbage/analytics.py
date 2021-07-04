@@ -72,7 +72,7 @@ def maximum_four_card_score(hand):
     return max_score, sorted(best_hand)
 
 
-def average_hand_value(hand, discard=None):
+def expected_average(hand, discard=None):
     """
 
     Given a four card hand, what is the average hand value? That is,
@@ -157,7 +157,7 @@ def best_discard(hand, **kwargs):
         # use a set to figure out what cards were discarded
         discard = list(set(hand) - set(candidate_hand))
 
-        combo_average = average_hand_value(
+        combo_average = expected_average(
             list(candidate_hand),
             discard,
         )

@@ -43,7 +43,7 @@ from cribbage.cards import (
 
 from cribbage.analytics import (
     maximum_four_card_score,
-    average_hand_value,
+    expected_average,
     best_discard,
 )
 
@@ -760,7 +760,7 @@ def test_maximum_average_hand(data):
     cards = [Card(*c) for c in left[0]]
     discard = [Card(*c) for c in left[1]] if left[1] else None
 
-    average_value = average_hand_value(cards, discard)
+    average_value = expected_average(cards, discard)
 
     assert pytest.approx(average_value, rel=1e-4, abs=1e-12) == right
 
