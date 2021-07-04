@@ -140,21 +140,25 @@ def discard_max_hand_value(hand, **kwargs):
 
     # Return
 
-    A tuple (int, list(Card), list(Card)), containing the best average,
-    the hand and the discard.
+    A dictionary containing the results of the analysis. It is keyed:
+    - best_average - The best expected average
+    - best_hand - a list of cards representing the best hand
+    - best_discard - a list of cards representing the best discard
+    - messages - Detailed calculation steps
 
     """
 
     assert len(hand) == 6
 
-    verbose = kwargs.get('verbose', False)
     messages = []
 
-    best_average = 0
-    best_hand = None
-    best_discard = None
+    results = {
+        'best_average':0,
+        'best_hand':None,
+        'best_discard':None,
+    }
 
-    for candidate_hand in hand_combinations(hand, combination_length=4):
+    for i, candidate_hand in enumerate(hand_combinations(hand, combination_length=4)):
 
         # use a set to figure out what cards were discarded
         discard = list(set(hand) - set(candidate_hand))
@@ -164,23 +168,17 @@ def discard_max_hand_value(hand, **kwargs):
             discard,
         )
 
-        if verbose:
-            #
-            candidate_value = score_hand(list(candidate_hand), None)
-            messages.append(f'Hand = {display_hand(sorted(candidate_hand), cool=True)}, value = {candidate_value}, average = {combo_average:.3f}')
+        candidate_value = score_hand(list(candidate_hand), None)
+        messages.append(f'{i} Hand = {display_hand(sorted(candidate_hand), cool=True)}, value = {candidate_value}, average = {combo_average:.3f}')
 
+        if combo_average > results['best_average']:
+            results['best_average'] = combo_average
+            results['best_hand'] = sorted(candidate_hand)
+            results['best_discard'] = sorted(discard)
 
-        if combo_average > best_average:
-            best_average = combo_average
-            best_hand = candidate_hand
-            best_discard = discard
+    results['messages'] = messages
 
-    results = [best_average, sorted(best_hand), sorted(best_discard)]
-
-    if verbose:
-        results.append(messages)
-
-    return tuple(results)
+    return results
 
 
 

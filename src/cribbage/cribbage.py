@@ -271,13 +271,11 @@ def discard(*args, **kwargs):
 
     cards = [Card(*c) for c in kwargs["hand"]]
 
-    result = discard_max_hand_value(cards,verbose=kwargs['verbose'])
+    result = discard_max_hand_value(cards)
 
-
-    hand_average = result[0]
-    hand = result[1]
-    discard = result[2]
-
+    hand = result['best_hand']
+    discard = result['best_discard']
+    hand_average = result['best_average']
     hand_value = score_hand(hand, None)
 
     click.echo()
@@ -289,7 +287,7 @@ def discard(*args, **kwargs):
 
     if kwargs['verbose']:
 
-        for row in result[3]:
+        for row in result['messages']:
             click.echo(row)
 
         click.echo()

@@ -262,6 +262,10 @@ class Card:
 
         """
 
+        # NOTE: We could probably rewrite this as a lookup dictionary.
+        # That might be clearer and contain the point/value rules in one
+        # place
+
         if self.rank == "A":
             return 1
 
@@ -294,27 +298,28 @@ class Card:
 
             return self.rank + SUIT_SYMBOLS[self.suit]
 
-    def __add__(self, other):
-        """
-        By implementing this we can add the value of cards together
-        using c1 + c2 instead of c1.value() + c2.value()
-        """
+    # commented out for now - I don't think it makes sense to add cards together._
+    # def __add__(self, other):
+    #     """
+    #     By implementing this we can add the value of cards together
+    #     using c1 + c2 instead of c1.value() + c2.value()
+    #     """
 
-        if isinstance(other, Card):
-            return self.value() + other.value()
+    #     if isinstance(other, Card):
+    #         return self.value() + other.value()
 
-        return self.value() + other
+    #     return self.value() + other
 
-    def __radd__(self, other):
-        """
+    # def __radd__(self, other):
+    #     """
 
-        A + B
+    #     A + B
 
-        This is called if the left object, A doesn't have an __add__
-        defined or it doesn't know how to handle addition to B.
-        """
+    #     This is called if the left object, A doesn't have an __add__
+    #     defined or it doesn't know how to handle addition to B.
+    #     """
 
-        return self.value() + other
+    #     return self.value() + other
 
     def __lt__(self, other):
         """
@@ -393,29 +398,30 @@ def display_hand(hand, cool=False, super_cool=False):
         return [str(card) for card in hand]
 
 
-def count_hand(hand):
-    """
+# Only used for counting fifteens - no point in having a dedicated method for it.
+# def count_hand(hand):
+#     """
 
-    Given the list of cards, return the total count based on the face
-    value of the cards.
+#     Given the list of cards, return the total count based on the face
+#     value of the cards.
 
-    # Parameters
+#     # Parameters
 
-    hand:list(Card)
-        - The list of cards to convert to a string representation
+#     hand:list(Card)
+#         - The list of cards to convert to a string representation
 
-    # Return
+#     # Return
 
-    An integer representing the total face value of the cards in the
-    hand.
+#     An integer representing the total face value of the cards in the
+#     hand.
 
-    # NOTE
+#     # NOTE
 
-    If the hand is empty, by default the sum function returns 0.
+#     If the hand is empty, by default the sum function returns 0.
 
-    """
+#     """
 
-    return sum([card.value() for card in hand])
+#     return sum([card.value() for card in hand])
 
 
 def hand_combinations(hand, combination_length=None):
@@ -518,7 +524,7 @@ def find_fifteens(hand):
 
     """
     for combo in hand_combinations(hand):
-        if count_hand(combo) == 15:
+        if sum([card.value() for card in combo]) == 15:
             yield combo
 
 
@@ -534,10 +540,6 @@ def find_pairs(hand):
     for left, right in hand_combinations(hand, combination_length=2):
         if left.rank == right.rank:
             yield left, right
-
-    # for combo in hand.every_combination(count=2):
-    #     if combo[0].rank == combo[1].rank:
-    #         yield combo
 
 
 def find_runs(hand):

@@ -31,7 +31,6 @@ from cribbage.cards import (
     Card,
     make_deck,
     display_hand,
-    count_hand,
     hand_combinations,
     find_fifteens,
     find_pairs,
@@ -177,23 +176,23 @@ def test_card_cool2(data):
 # -------------
 # Test Card - add
 
-data = [
-    (("8D", "9C"), 17),
-    (("AS", "9C", "3H"), 13),
-    (("6C", "9C"), 15),
-    (("TD", "JC", "AS"), 21),
-    (("TD", "JC", "KS"), 30),
-]
+# data = [
+#     (("8D", "9C"), 17),
+#     (("AS", "9C", "3H"), 13),
+#     (("6C", "9C"), 15),
+#     (("TD", "JC", "AS"), 21),
+#     (("TD", "JC", "KS"), 30),
+# ]
 
 
-@pytest.mark.parametrize("data", data)
-def test_card_add(data):
+# @pytest.mark.parametrize("data", data)
+# def test_card_add(data):
 
-    left, right = data
+#     left, right = data
 
-    value = sum([Card(*c) for c in left])
+#     value = sum([Card(*c) for c in left])
 
-    assert value == right
+#     assert value == right
 
 
 # -------------
@@ -293,22 +292,22 @@ def test_hand_display(data):
     assert all([a == b for a, b in zip(items, right)])
 
 
-# -------------
-# Test count_hand
+# # -------------
+# # Test count_hand
 
-data = [
-    (("TC", "AS", "3H"), 14),
-    (("9C", "AS", "3D"), 13),
-    (("9C", "AS", "3D", "Ac", "ah"), 15),
-]
+# data = [
+#     (("TC", "AS", "3H"), 14),
+#     (("9C", "AS", "3D"), 13),
+#     (("9C", "AS", "3D", "Ac", "ah"), 15),
+# ]
 
 
-@pytest.mark.parametrize("data", data)
-def test_hand_value(data):
+# @pytest.mark.parametrize("data", data)
+# def test_hand_value(data):
 
-    left, right = data
+#     left, right = data
 
-    assert count_hand([Card(*c) for c in left]) == right
+#     assert count_hand([Card(*c) for c in left]) == right
 
 
 # -------------
@@ -784,10 +783,11 @@ def test_best_discard(data):
 
     cards = [Card(*c) for c in left]
 
-    average_value, hand, discard = discard_max_hand_value(cards)
+    result = discard_max_hand_value(cards)
 
-    print(hand)
-    print(discard)
+    average_value = result['best_average']
+    hand = result['best_hand']
+    discard = result['best_discard']
 
     assert pytest.approx(average_value, rel=1e-4, abs=1e-12) == right[0]
 
