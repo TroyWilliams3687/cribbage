@@ -126,11 +126,11 @@ def expected_average(hand, discard=None):
     return total / len(deck)
 
 
-def best_discard(hand, **kwargs):
+def discard_max_hand_value(hand, **kwargs):
     """
-    Given 6 cards, determine the best 4 card hand by maximizing the
-    expected average value.
-
+    Given a 6 card hand and we have to decide which two cards to
+    discard to the crib. This method will calculate the optimal discard
+    that maximizes the expected average of the remaining 4 cards.
 
     # Parameters
 

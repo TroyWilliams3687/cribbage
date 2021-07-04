@@ -44,7 +44,7 @@ from cribbage.cards import (
 from cribbage.analytics import (
     maximum_four_card_score,
     expected_average,
-    best_discard,
+    discard_max_hand_value,
 )
 
 # -------------
@@ -766,7 +766,7 @@ def test_maximum_average_hand(data):
 
 
 # -------------
-# best_discard
+# discard_max_hand_value
 
 
 left = ('KH', '7D', '9D', 'AD', '8C', 'JD')
@@ -784,7 +784,7 @@ def test_best_discard(data):
 
     cards = [Card(*c) for c in left]
 
-    average_value, hand, discard = best_discard(cards)
+    average_value, hand, discard = discard_max_hand_value(cards)
 
     print(hand)
     print(discard)

@@ -36,8 +36,8 @@ from .cards import (
 )
 
 from .analytics import (
-    average_hand_value,
-    best_discard,
+    expected_average,
+    discard_max_hand_value,
 )
 
 # ------------
@@ -229,7 +229,7 @@ def average(*args, **kwargs):
     hand = [Card(*c) for c in kwargs["hand"]]
     discard = [Card(*c) for c in kwargs["discard"]]
 
-    hand_average = average_hand_value(hand, discard)
+    hand_average = expected_average(hand, discard)
     hand_value = score_hand(hand, None)
 
     click.echo()
@@ -257,7 +257,6 @@ def average(*args, **kwargs):
 @click.pass_context
 def discard(*args, **kwargs):
     """
-
     Given 6 cards in your hand, determine the best 2 cards to discard by
     keeping the 4 cards that will yield the highest expected average
     value.
@@ -272,7 +271,7 @@ def discard(*args, **kwargs):
 
     cards = [Card(*c) for c in kwargs["hand"]]
 
-    result = best_discard(cards,verbose=kwargs['verbose'])
+    result = discard_max_hand_value(cards,verbose=kwargs['verbose'])
 
 
     hand_average = result[0]
