@@ -61,4 +61,8 @@ target/
 # Sublime
 *.sublime-workspace
 
+# Jupyter Notebook
+.ipynb_checkpoints
+
+
 # Custom
