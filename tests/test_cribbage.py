@@ -201,8 +201,9 @@ def test_card_cool2(data):
 
 
 data = [
-    (("TC", "AS", "3H"), ("3H", "AS", "TC")),
-    (("TC", "AS", "3H", "6C", "4D"), ("3H", "4D", "AS", "6C", "TC")),
+    (("TC", "AS", "3H"), ("AS", "3H", "TC")),
+    (("TC", "AS", "3H", "6C", "4D"), ("AS", "3H", "4D", "6C", "TC")),
+    (("4S", "3H", "5C", "4D"), ("3H", "4D", "4S", "5C")),
 ]
 
 
@@ -315,9 +316,9 @@ def test_hand_display(data):
 # Test Hand - Sorted
 
 data = [
-    (("TC", "AS", "3H"), ("3H", "AS", "TC")),
-    (("9C", "AS", "3D"), ("3D", "AS", "9C")),
-    (("9C", "AS", "3D", "Ac", "ah"), ("AH", "3D", "AS", "AC", "9C")),
+    (("TC", "AS", "3H"), ("AS", "3H", "TC")),
+    (("9C", "AS", "3D"), ("AS", "3D", "9C")),
+    (("9C", "AS", "3D", "Ac", "ah"), ("AH", "AS", "AC", "3D", "9C")),
 ]
 
 
@@ -708,13 +709,13 @@ def test_score(data):
 # Test maximum_four_card_score
 
 left = ("4C", "5C", "6D", "5S", "QS", "AD")
-right = (12, ("6D", "5S", "4C", "5C"))
+right = (12, ("4C","5S", "5C", "6D"))
 
 data = [(left, right)]
 
 
 left = ("3S", "8D", "TH", "QS", "JD", "AD")
-right = (3, ("TH", "JD", "3S", "QS"))
+right = (3, ("3S", "TH", "JD", "QS"))
 data.append((left, right))
 
 
@@ -725,6 +726,8 @@ def test_maximum_four_card_score(data):
 
     cards = [Card(*c) for c in left]
     max_score, hand = maximum_four_card_score(cards)
+
+    print(max_score, hand)
 
     assert max_score == right[0]
 
@@ -770,11 +773,11 @@ def test_maximum_average_hand(data):
 
 
 left = ('KH', '7D', '9D', 'AD', '8C', 'JD')
-right = (7.8913, ('AD', '7D','9D', '8C'), ('KH', 'JD'))
+right = (7.8913, ('AD', '7D', '8C', '9D'), ('JD', 'KH'))
 data = [(left, right)]
 
 left = ('4C', '5D', 'QH', 'QC', 'AC', 'AD')
-right = (9.304,  ('AD', 'AC', '4C', 'QC'), ('QH', '5D'))
+right = (9.304,  ('AD', 'AC', '4C', 'QC'), ('5D', 'QH'))
 data.append((left, right))
 
 @pytest.mark.parametrize("data", data)
@@ -789,6 +792,9 @@ def test_best_discard(data):
     average_value = result['best_average']
     hand = result['best_hand']
     discard = result['best_discard']
+
+    print(hand)
+    print(discard)
 
     assert pytest.approx(average_value, rel=1e-4, abs=1e-12) == right[0]
 

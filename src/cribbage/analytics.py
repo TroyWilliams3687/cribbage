@@ -150,6 +150,7 @@ def _calc_crib_average(pair, discard=None, base_cards=None):
 
     return hand_average
 
+
 def expected_average_crib(hand, discard):
     """
     Given the 4 card hand and the 2 card discard, calculate the expected
@@ -204,7 +205,7 @@ def expected_average_crib(hand, discard):
     with Pool(processes=None) as p:
         crib_averages = p.map(fn, hand_combinations(deck, combination_length=2))
 
-    return sum(crib_averages)/len(crib_averages)
+    return sum(crib_averages) / len(crib_averages)
 
 
 def discard_max_hand_value(hand, **kwargs):
@@ -234,9 +235,9 @@ def discard_max_hand_value(hand, **kwargs):
     messages = []
 
     results = {
-        'best_average':0,
-        'best_hand':None,
-        'best_discard':None,
+        "best_average": 0,
+        "best_hand": None,
+        "best_discard": None,
     }
 
     for i, candidate_hand in enumerate(hand_combinations(hand, combination_length=4)):
@@ -250,17 +251,15 @@ def discard_max_hand_value(hand, **kwargs):
         )
 
         candidate_value = score_hand(list(candidate_hand), None)
-        messages.append(f'{i:>2} Hand = {display_hand(sorted(candidate_hand), cool=True)}, value = {candidate_value}, average = {combo_average:.3f}')
+        messages.append(
+            f"{i:>2} Hand = {display_hand(sorted(candidate_hand), cool=True)}, value = {candidate_value}, average = {combo_average:.3f}"
+        )
 
-        if combo_average > results['best_average']:
-            results['best_average'] = combo_average
-            results['best_hand'] = sorted(candidate_hand)
-            results['best_discard'] = sorted(discard)
+        if combo_average > results["best_average"]:
+            results["best_average"] = combo_average
+            results["best_hand"] = sorted(candidate_hand)
+            results["best_discard"] = sorted(discard)
 
-    results['messages'] = messages
+    results["messages"] = messages
 
     return results
-
-
-
-

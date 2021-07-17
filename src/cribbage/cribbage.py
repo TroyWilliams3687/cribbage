@@ -239,7 +239,6 @@ def average(*args, **kwargs):
     if discard:
         click.echo(f"Discard = {display_hand(discard, cool=True)}")
 
-
     click.echo(f"Value = {hand_value}")
     click.echo(f"Average Value = {hand_average:.3f}")
 
@@ -274,9 +273,9 @@ def discard(*args, **kwargs):
 
     result = discard_max_hand_value(cards)
 
-    hand = result['best_hand']
-    discard = result['best_discard']
-    hand_average = result['best_average']
+    hand = result["best_hand"]
+    discard = result["best_discard"]
+    hand_average = result["best_average"]
     hand_value = score_hand(hand, None)
 
     average_crib_value = expected_average_crib(hand, discard)
@@ -288,10 +287,10 @@ def discard(*args, **kwargs):
     click.echo(f"Average Hand Value = {hand_average:.3f}")
     click.echo(f"Average Crib Value = {average_crib_value:.3f}")
 
-    if kwargs['verbose']:
+    if kwargs["verbose"]:
         click.echo()
 
-        for row in result['messages']:
+        for row in result["messages"]:
             click.echo(row)
 
     click.echo()

@@ -298,35 +298,11 @@ class Card:
 
             return self.rank + SUIT_SYMBOLS[self.suit]
 
-    # commented out for now - I don't think it makes sense to add cards together._
-    # def __add__(self, other):
-    #     """
-    #     By implementing this we can add the value of cards together
-    #     using c1 + c2 instead of c1.value() + c2.value()
-    #     """
-
-    #     if isinstance(other, Card):
-    #         return self.value() + other.value()
-
-    #     return self.value() + other
-
-    # def __radd__(self, other):
-    #     """
-
-    #     A + B
-
-    #     This is called if the left object, A doesn't have an __add__
-    #     defined or it doesn't know how to handle addition to B.
-    #     """
-
-    #     return self.value() + other
-
     def __lt__(self, other):
         """
         Make the item sortable by rank
 
-        This will sort by suit, then rank effectively grouping cards
-        that are the same suit together.
+        This will sort by rank, then suit.
 
         If you need something different, use the key function on the
         sorted method for a list of cards:
@@ -335,9 +311,9 @@ class Card:
 
         """
 
-        return (SUIT_SORT[self.suit], RANK_SORT[self.rank]) < (
-            SUIT_SORT[other.suit],
+        return (RANK_SORT[self.rank], SUIT_SORT[self.suit]) < (
             RANK_SORT[other.rank],
+            SUIT_SORT[other.suit],
         )
 
     def __str__(self):
@@ -359,6 +335,10 @@ def make_deck():
     # Return
 
     Returns a list of cards containing 52 - all of the suits and ranks.
+
+    # NOTE
+
+    The cards are not shuffled.
 
     """
 
@@ -396,32 +376,6 @@ def display_hand(hand, cool=False, super_cool=False):
 
     else:
         return [str(card) for card in hand]
-
-
-# Only used for counting fifteens - no point in having a dedicated method for it.
-# def count_hand(hand):
-#     """
-
-#     Given the list of cards, return the total count based on the face
-#     value of the cards.
-
-#     # Parameters
-
-#     hand:list(Card)
-#         - The list of cards to convert to a string representation
-
-#     # Return
-
-#     An integer representing the total face value of the cards in the
-#     hand.
-
-#     # NOTE
-
-#     If the hand is empty, by default the sum function returns 0.
-
-#     """
-
-#     return sum([card.value() for card in hand])
 
 
 def hand_combinations(hand, combination_length=None):
