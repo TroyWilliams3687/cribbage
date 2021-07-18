@@ -18,6 +18,8 @@
 # System Modules - Included with Python
 
 from pathlib import Path
+from zoneinfo import ZoneInfo
+from datetime import datetime
 
 # ------------
 # 3rd Party - From pip
@@ -39,6 +41,7 @@ from .analytics import (
     expected_average,
     expected_average_crib,
     discard_max_hand_value,
+    discard_consider_all_combos,
 )
 
 # ------------
@@ -243,6 +246,35 @@ def average(*args, **kwargs):
     click.echo(f"Average Value = {hand_average:.3f}")
 
 
+def write_message(message):
+    """
+    Simple callback method to allow library code to write messages to
+    STDOUT.
+    """
+
+    click.echo(message)
+
+def display_discard_results(results, processing_message, delta_key, **kwargs):
+    """
+    """
+
+    dp = kwargs.get('dp', 3)
+    sp = kwargs.get('sp', 6)
+
+    click.echo(processing_message)
+
+    for i, result in enumerate(results, start=1):
+
+        message = [
+            f"{i:>2} {display_hand(sorted(result['hand']), cool=True)} ({result['value']}); {display_hand(sorted(result['discard']), cool=True)}",
+            f"EA = {result['expected_average']:>{sp}.{dp}f}",
+            f"CEA = {result['expected_average_crib']:>{sp}.{dp}f}",
+            f"Δ = {result[delta_key]:>{sp}.{dp}f}",
+        ]
+
+        click.echo(", ".join(message))
+
+
 @main.command("discard")
 @click.argument(
     "hand",
@@ -252,45 +284,110 @@ def average(*args, **kwargs):
 @click.option(
     "--verbose",
     is_flag=True,
-    help="Display more information about the process",
+    help="Display more information about the process.",
 )
 @click.pass_context
 def discard(*args, **kwargs):
     """
-    Given 6 cards in your hand, determine the best 2 cards to discard by
-    keeping the 4 cards that will yield the highest expected average
-    value.
+    Given 6 cards, display all of the 4 card combinations with their
+    expected average for each hand and the expected average for the
+    crib. Display the best discard choice for the Pone and the Dealer.
+
+    The idea for the dealer and pone is to maximize their overall score.
+    For the dealer, they should maximize the sum of the hand expected
+    average and the crib expected average. This may mean in some cases
+    favoring a lower hand average.
+
+    For the pone, they want to maximize the overall score, but they want
+    to maximize the difference between the hand average and the crib
+    average. In most cases, this means they should attempt to maximize
+    the hand average value.
+
+    What this method does is looks at the pone and dealer strategies. It
+    will generate a table for each player. The table will have the
+    following rows:
+
+    \b
+    1 ['3♥', '4♦', '5♦', '5♠'] (8); ['2♣', 'J♠'], EA = 12.478, CEA =  3.855, Δ =  8.623
+
+    \b
+    - The first column represents the hand configuration.
+    - The second column represents the cards to keep in hand.
+    - The third column represents the cards to discard to the crib.
+    - The `EA` column represents the expected average for the hand.
+    - The `CEA` column represents the expected average for the crib.
+    - The Δ column represents the sum of EA and CEA for a dealer hand
+      and the difference (EA - CEA) for a pone hand.
 
     # Usage
 
-    $ cribbage discard 3H 4D 5D 5S JS 2C
+    $ cribbage discard 3H 4D 5D 5S JS 2C --verbose
 
-    $ cribbage discard KH 7D 9D AD 8C JD --verbose
+    $ cribbage discard 3H 4D 5D 5S JS 2C --verbose
+
+    $ cribbage discard KH 7D 9D AD 8C JD
+
+    # NOTE
+
+    \b
+    EA  - Expected Average for the hand
+    CEA - Expected Average for the Crib
+    EA - CEA = The crib provides nothing to the pone. Subtract the crib value to determine the best hand to play.
+    EA + CEA = We will augment the dealers hand by adding the crib average to the hand average.
 
     """
 
+    ctx = args[0]
+
+    build_start_time = datetime.now().replace(tzinfo=ZoneInfo("America/Toronto"))
+
+    click.echo()
+
+
     cards = [Card(*c) for c in kwargs["hand"]]
 
-    result = discard_max_hand_value(cards)
+    # do we have duplicate cards?
+    duplicates = set(cards)
 
-    hand = result["best_hand"]
-    discard = result["best_discard"]
-    hand_average = result["best_average"]
-    hand_value = score_hand(hand, None)
+    if len(cards) != 6:
+        click.echo(f'6 Cards are required! Only {len(cards)} found.')
+        ctx.abort()
 
-    average_crib_value = expected_average_crib(hand, discard)
+    if len(duplicates) < len(cards):
+        click.echo(f'Duplicate Cards are not Allowed!')
+        ctx.abort()
 
-    click.echo()
-    click.echo(f"Hand = {display_hand(hand, cool=True)}")
-    click.echo(f"Discard = {display_hand(discard, cool=True)}")
-    click.echo(f"Value = {hand_value}")
-    click.echo(f"Average Hand Value = {hand_average:.3f}")
-    click.echo(f"Average Crib Value = {average_crib_value:.3f}")
+    # --------------
+    click.echo(f"Processing....")
 
-    if kwargs["verbose"]:
-        click.echo()
+    cb = write_message if kwargs["verbose"] else None
 
-        for row in result["messages"]:
-            click.echo(row)
+    results = discard_consider_all_combos(cards, callback=cb)
 
     click.echo()
+
+    results_pone = sorted(
+        results,
+        key=lambda x: x["delta_pone"],
+        reverse=True,
+    )
+
+    results_dealer = sorted(
+        results,
+        key=lambda x: x["delta_dealer"],
+        reverse=True,
+    )
+
+    display_discard_results(results_pone, "Processing Pone Hands....", 'delta_pone', dp=3, sp=6)
+
+    click.echo()
+
+    display_discard_results(results_pone, "Processing Dealer Hands....", 'delta_dealer', dp=3, sp=6)
+
+    # --------------
+    build_end_time = datetime.now().replace(tzinfo=ZoneInfo("America/Toronto"))
+
+    click.echo("")
+    click.echo(f"Started  - {build_start_time}")
+    click.echo(f"Finished - {build_end_time}")
+    click.echo(f"Elapsed:   {build_end_time - build_start_time}")

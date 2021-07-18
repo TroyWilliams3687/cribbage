@@ -210,9 +210,9 @@ def expected_average_crib(hand, discard):
 
 def discard_max_hand_value(hand, **kwargs):
     """
-    Given a 6 card hand and we have to decide which two cards to
-    discard to the crib. This method will calculate the optimal discard
-    that maximizes the expected average of the remaining 4 cards.
+    Given a 6 card hand, we have to decide which two cards to discard to
+    the crib. This method will calculate the optimal discard that
+    maximizes the expected average of the remaining 4 cards.
 
     # Parameters
 
@@ -240,7 +240,9 @@ def discard_max_hand_value(hand, **kwargs):
         "best_discard": None,
     }
 
-    for i, candidate_hand in enumerate(hand_combinations(hand, combination_length=4)):
+    for i, candidate_hand in enumerate(
+        hand_combinations(hand, combination_length=4), start=1
+    ):
 
         # use a set to figure out what cards were discarded
         discard = list(set(hand) - set(candidate_hand))
@@ -252,7 +254,7 @@ def discard_max_hand_value(hand, **kwargs):
 
         candidate_value = score_hand(list(candidate_hand), None)
         messages.append(
-            f"{i:>2} Hand = {display_hand(sorted(candidate_hand), cool=True)}, value = {candidate_value}, average = {combo_average:.3f}"
+            f"{i:>2} Hand = {display_hand(sorted(candidate_hand), cool=True)} = {candidate_value}, EA = {combo_average:.3f}"
         )
 
         if combo_average > results["best_average"]:
@@ -263,3 +265,70 @@ def discard_max_hand_value(hand, **kwargs):
     results["messages"] = messages
 
     return results
+
+
+def discard_consider_all_combos(hand, **kwargs):
+    """
+    Given a 6 card hand, iterate through every 4 card combination
+    (15) and return a list of dicts for each hand combination
+    containing:
+
+    - the 4 cards
+    - the value
+    - the expected average value
+    - the crib expected average value
+
+    # Parameters
+
+    hand:list(Card)
+        - The list of cards to determine the best discard
+        - Expecting 6 cards.
+
+    # Return
+
+    A generator yielding one dictionary of results at a time.
+
+    - `hand` - This list of 4 cards for the hand.
+    - `discard` - The list of 2 cards discarded to the crib.
+    - `value` - The value of the hand.
+    - `expected_average` - The expected average of the hand considering
+      the potential cut card.
+    - `expected_average_crib` - The expected average of the crib given
+      the 2 discarded cards.
+
+    """
+
+    assert len(hand) == 6
+
+    callback = kwargs.get("callback", None)
+
+    combos = []
+    for i, candidate_hand in enumerate(
+        hand_combinations(hand, combination_length=4), start=1
+    ):
+
+        ch = list(candidate_hand)
+        discard = list(set(hand) - set(candidate_hand))
+
+        if callback:
+            callback(
+                f"{i:>2} H = {display_hand(sorted(candidate_hand), cool=True)} D = {display_hand(sorted(discard), cool=True)}"
+            )
+
+        values = {
+            "hand": ch,
+            "value": score_hand(ch, None),
+            "discard": discard,
+            "expected_average": expected_average(ch, discard),
+            "expected_average_crib": expected_average_crib(ch, discard),
+        }
+
+        # subtract the expected crib average from the expected hand average of the pone
+        values['delta_pone'] = values['expected_average'] - values['expected_average_crib']
+
+        # add the expected hand average and expected crib average for the pone
+        values['delta_dealer'] = values['expected_average'] + values['expected_average_crib']
+
+        combos.append(values)
+
+    return combos
