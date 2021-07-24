@@ -851,6 +851,12 @@ def score_hand_breakdown(
         - Only applied when counting the crib.
         - DEFAULT - False
 
+    # Parameters (kwargs)
+
+    basic:bool
+        - Display the cards using letters for suits instead of symbols (♥,♦,♣,♠)
+        - DEFAULT - False
+
     # Return
 
     A list of strings representing the counts
