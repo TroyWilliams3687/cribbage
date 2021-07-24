@@ -248,7 +248,7 @@ def average(*args, **kwargs):
     discard = [Card(*c) for c in kwargs["discard"]]
 
     click.echo()
-    click.echo(f"Hand = {display_hand(hand, cool=True, as_string=True)}")
+    click.echo(f"Hand    = {display_hand(hand, cool=True, as_string=True)}")
 
     if discard:
         click.echo(f"Discard = {display_hand(discard, cool=True, as_string=True)}")
@@ -259,8 +259,8 @@ def average(*args, **kwargs):
     hand_value = score_hand(hand, None)
 
     click.echo()
-    click.echo(f"Value = {hand_value}")
-    click.echo(f"Average Value = {hand_average:.3f}")
+    click.echo(f"Hand Value       = {hand_value}")
+    click.echo(f"Expected Average = {hand_average:.3f}")
     click.echo()
 
 
