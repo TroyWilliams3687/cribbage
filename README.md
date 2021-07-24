@@ -123,7 +123,7 @@ Value = 8
 Average Value = 12.478
 ```
 
-From the Above command you can see that the expected average for the hand: 3♥, 4♦, 5♦, 5♠ with a discard of J♠, 2♣ is 12.478. There are 46 cards left in the deck, each one is drawn as a cut card and the hand value is computed. The average of the computed values is known as the expected average. From the above out point, depending on the cut card you could have a had with a value of 20 or as low as 8. On average you can expect to score about 12 or 13 points.
+From the Above command you can see that the expected average for the hand: 3♥, 4♦, 5♦, 5♠ with a discard of J♠, 2♣ is 12.478. There are 46 cards left in the deck, each one is drawn as a cut card and the hand value is computed. The average of the computed values is known as the expected average. From the above out put, depending on the cut card you could have a had with a value of 20 or as low as 8. On average you can expect to score about 12 or 13 points.
 
 
 You don't have to see the complete calculations by excluding the `--verbose` flag from the command:
