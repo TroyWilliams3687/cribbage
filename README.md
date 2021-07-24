@@ -193,13 +193,13 @@ Elapsed:   0:00:05.964551
 
 Both tables have the following columns:
 
-- The first column represents the hand configuration.
-- The second column represents the cards to keep in hand.
-- The third column represents the cards to discard to the crib.
+- The first number indicates the hand number and helps to differentiate between different hands
+- The next four values are the cards in the hand
+- The following number in parenthesis is the value of the 4 card hand only
+- Following the value is the cards to discard to the crib.
 - The `EA` column represents the expected average for the hand.
 - The `CEA` column represents the expected average for the crib.
-- The `Δ` column represents the sum of (EA + CEA) for a dealer hand
-  and the difference (EA - CEA) for a pone hand.
+- The `Δ` column represents the sum of (EA + CEA) for a dealer hand and the difference (EA - CEA) for a pone hand.
 
 The goal is to maximize the delta column (`Δ`). Simply select the hand with the largest value in the delta column.
 
