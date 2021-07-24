@@ -145,7 +145,7 @@ This is where things get interesting, given 6 cards, which 2 should you discard 
 
 The dealer has the advantage of the crib while the pone does not. Therefore your strategy will be different depending on which side of the table you are sitting on. The Pone wants to minimize the value of the crib. She doesn't want to give the dealer any points if possible. With that in mind the Pone should aim to minimize the number of points to the crib. In most cases they are trying to maximize the points in their hand and minimize the points in the crib.
 
-On the other hand, the dealer wants to maximize the number of points they discard to the crib. After all, the pick up the points from the crib. IN some cases this might mean discarding some good cards to the crib (we can see that on line 1, below, in the dealer table).
+On the other hand, the dealer wants to maximize the number of points they discard to the crib. After all, the pick up the points from the crib. In some cases this might mean discarding some good cards to the crib (we can see that on line 1, below, in the dealer table).
 
 ```bash
 $ cribbage discard 3H 4D 5D 5S JS 2C
