@@ -379,17 +379,16 @@ def discard(*args, **kwargs):
         reverse=True,
     )
 
+    display_discard_results(
+        results_pone, "Processing Pone Hands....", "delta_pone", dp=3, sp=6
+    )
+    click.echo()
+
     results_dealer = sorted(
         results,
         key=lambda x: x["delta_dealer"],
         reverse=True,
     )
-
-    display_discard_results(
-        results_pone, "Processing Pone Hands....", "delta_pone", dp=3, sp=6
-    )
-
-    click.echo()
 
     display_discard_results(
         results_dealer, "Processing Dealer Hands....", "delta_dealer", dp=3, sp=6
