@@ -37,44 +37,6 @@ from cribbage.cards import (
 # -------------
 
 
-def maximum_four_card_score(hand):
-    """
-
-    Given the hand, determine the maximum score of all 4 hand
-    combinations.
-
-    Generally, this is used to help decide which cards to discard after
-    the deal. Normally you will supply 6 cards. However this method can
-    work with any number of cards, but requires at least 4 cards
-    (which won't be interesting).
-
-    # Parameters
-
-    hand:list(Card)
-        - The list of cards we want to examine
-
-    # Return
-
-    The list of 4 cards that provide the maximum value
-
-
-    """
-
-    assert len(hand) >= 4
-
-    max_score = 0
-    best_hand = None
-
-    for combo in hand_combinations(hand, combination_length=4):
-        result = score_hand(combo, None)
-
-        if result > max_score:
-            max_score = result
-            best_hand = combo
-
-    return max_score, sorted(best_hand)
-
-
 def expected_average(hand, discard=None):
     """
 
@@ -206,65 +168,6 @@ def expected_average_crib(hand, discard):
         crib_averages = p.map(fn, hand_combinations(deck, combination_length=2))
 
     return sum(crib_averages) / len(crib_averages)
-
-
-def discard_max_hand_value(hand, **kwargs):
-    """
-    Given a 6 card hand, we have to decide which two cards to discard to
-    the crib. This method will calculate the optimal discard that
-    maximizes the expected average of the remaining 4 cards.
-
-    # Parameters
-
-    hand:list(Card)
-        - The list of cards to determine the best discard
-        - Expecting 6 cards.
-
-    # Return
-
-    A dictionary containing the results of the analysis. It is keyed:
-    - best_average - The best expected average
-    - best_hand - a list of cards representing the best hand
-    - best_discard - a list of cards representing the best discard
-    - messages - Detailed calculation steps
-
-    """
-
-    assert len(hand) == 6
-
-    messages = []
-
-    results = {
-        "best_average": 0,
-        "best_hand": None,
-        "best_discard": None,
-    }
-
-    for i, candidate_hand in enumerate(
-        hand_combinations(hand, combination_length=4), start=1
-    ):
-
-        # use a set to figure out what cards were discarded
-        discard = list(set(hand) - set(candidate_hand))
-
-        combo_average = expected_average(
-            list(candidate_hand),
-            discard,
-        )
-
-        candidate_value = score_hand(list(candidate_hand), None)
-        messages.append(
-            f"{i:>2} Hand = {display_hand(sorted(candidate_hand), cool=True)} = {candidate_value}, EA = {combo_average:.3f}"
-        )
-
-        if combo_average > results["best_average"]:
-            results["best_average"] = combo_average
-            results["best_hand"] = sorted(candidate_hand)
-            results["best_discard"] = sorted(discard)
-
-    results["messages"] = messages
-
-    return results
 
 
 def discard_consider_all_combos(hand, **kwargs):

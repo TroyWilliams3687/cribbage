@@ -17,7 +17,6 @@
 # ------------
 # System Modules - Included with Python
 
-from pathlib import Path
 from zoneinfo import ZoneInfo
 from datetime import datetime
 
@@ -40,7 +39,6 @@ from .cards import (
 from .analytics import (
     expected_average,
     expected_average_crib,
-    discard_max_hand_value,
     discard_consider_all_combos,
 )
 

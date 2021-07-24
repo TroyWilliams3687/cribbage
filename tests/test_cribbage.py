@@ -41,9 +41,9 @@ from cribbage.cards import (
 )
 
 from cribbage.analytics import (
-    maximum_four_card_score,
+    # maximum_four_card_score,
     expected_average,
-    discard_max_hand_value,
+    # discard_max_hand_value,
     expected_average_crib,
 )
 
@@ -704,36 +704,6 @@ def test_score(data):
 
     assert results == right
 
-
-# -------------
-# Test maximum_four_card_score
-
-left = ("4C", "5C", "6D", "5S", "QS", "AD")
-right = (12, ("4C","5S", "5C", "6D"))
-
-data = [(left, right)]
-
-
-left = ("3S", "8D", "TH", "QS", "JD", "AD")
-right = (3, ("3S", "TH", "JD", "QS"))
-data.append((left, right))
-
-
-@pytest.mark.parametrize("data", data)
-def test_maximum_four_card_score(data):
-
-    left, right = data
-
-    cards = [Card(*c) for c in left]
-    max_score, hand = maximum_four_card_score(cards)
-
-    print(max_score, hand)
-
-    assert max_score == right[0]
-
-    assert all(str(u) == v for u, v in zip(hand, right[1]))
-
-
 # ------------
 # average_hand
 
@@ -766,40 +736,6 @@ def test_maximum_average_hand(data):
     average_value = expected_average(cards, discard)
 
     assert pytest.approx(average_value, rel=1e-4, abs=1e-12) == right
-
-
-# -------------
-# discard_max_hand_value
-
-
-left = ('KH', '7D', '9D', 'AD', '8C', 'JD')
-right = (7.8913, ('AD', '7D', '8C', '9D'), ('JD', 'KH'))
-data = [(left, right)]
-
-left = ('4C', '5D', 'QH', 'QC', 'AC', 'AD')
-right = (9.304,  ('AD', 'AC', '4C', 'QC'), ('5D', 'QH'))
-data.append((left, right))
-
-@pytest.mark.parametrize("data", data)
-def test_best_discard(data):
-
-    left, right = data
-
-    cards = [Card(*c) for c in left]
-
-    result = discard_max_hand_value(cards)
-
-    average_value = result['best_average']
-    hand = result['best_hand']
-    discard = result['best_discard']
-
-    print(hand)
-    print(discard)
-
-    assert pytest.approx(average_value, rel=1e-4, abs=1e-12) == right[0]
-
-    assert all(str(u) == v for u, v in zip(hand, right[1]))
-    assert all(str(u) == v for u, v in zip(discard, right[2]))
 
 
 # ------------

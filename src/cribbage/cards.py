@@ -31,8 +31,6 @@ from itertools import (
     groupby,
 )
 
-from collections.abc import MutableSequence
-
 # ------------
 # 3rd Party - From pip
 
@@ -153,23 +151,6 @@ CARD_SYMBOLS = {
     "QC": "🃝",  # "\U0001F0DD" - Queen of Clubs
     "KC": "🃞",  # "\U0001F0DE" - King of Clubs
 }
-
-# # set the cards sorting order - useful for sorting a list of cards.
-# rank_sort_order_map = {
-#     'A': 1,
-#     '2': 2,
-#     '3': 3,
-#     '4': 4,
-#     '5': 5,
-#     '6': 6,
-#     '7': 7,
-#     '8': 8,
-#     '9': 9,
-#     'T': 10,
-#     'J': 11,
-#     'Q': 12,
-#     'K': 13,
-# }
 
 
 @dataclass(frozen=True)
