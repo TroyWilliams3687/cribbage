@@ -324,10 +324,14 @@ def discard_consider_all_combos(hand, **kwargs):
         }
 
         # subtract the expected crib average from the expected hand average of the pone
-        values['delta_pone'] = values['expected_average'] - values['expected_average_crib']
+        values["delta_pone"] = (
+            values["expected_average"] - values["expected_average_crib"]
+        )
 
         # add the expected hand average and expected crib average for the pone
-        values['delta_dealer'] = values['expected_average'] + values['expected_average_crib']
+        values["delta_dealer"] = (
+            values["expected_average"] + values["expected_average_crib"]
+        )
 
         combos.append(values)
 

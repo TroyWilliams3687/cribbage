@@ -200,21 +200,27 @@ def score(*args, **kwargs):
 def average(*args, **kwargs):
     """
 
-    Takes 4 cards as a hand and computes the average value of that hand.
+    Takes a 4 card hand and computes the average value of that hand. It
+    will iterate through the remaining cards in the deck and pull one
+    at a time as it it were the cut card. It will calculate the score
+    of the hand and cut card taking the average value of all the
+    hands.
+
     It uses the fact that the 4 cards in the hand cannot appear as cut
     cards. It proceed to calculate the hand value of every combination
     of hand and cut card. From there it can determine the average value
     of the hand.
 
     You need to specify 4 cards (separated by spaces) for your hand
-    otherwise an error will be raised.
+    or it will raise an error.
 
     Optionally, you can specify any number of `discard` cards, separated
-    by spaces. The discards are cards that you know cannot turn up as
-    a cut card because they are not in the deck. Typically, you will
+    by spaces. The discards are cards that you know cannot turn up as a
+    cut card because they are not in the deck. Typically, you will
     specify the 2 cards you want to discard to the crib. In reality, it
-    is simply a list of cards that you know cannot appear as cut
-    cards.
+    is simply a list of cards that you know cannot appear as cut cards.
+    The program will take the first 4 cards as the hand and the rest as
+    discard.
 
     # Usage
 
@@ -254,12 +260,12 @@ def write_message(message):
 
     click.echo(message)
 
-def display_discard_results(results, processing_message, delta_key, **kwargs):
-    """
-    """
 
-    dp = kwargs.get('dp', 3)
-    sp = kwargs.get('sp', 6)
+def display_discard_results(results, processing_message, delta_key, **kwargs):
+    """ """
+
+    dp = kwargs.get("dp", 3)
+    sp = kwargs.get("sp", 6)
 
     click.echo(processing_message)
 
@@ -316,7 +322,7 @@ def discard(*args, **kwargs):
     - The third column represents the cards to discard to the crib.
     - The `EA` column represents the expected average for the hand.
     - The `CEA` column represents the expected average for the crib.
-    - The Δ column represents the sum of EA and CEA for a dealer hand
+    - The Δ column represents the sum of (EA + CEA) for a dealer hand
       and the difference (EA - CEA) for a pone hand.
 
     # Usage
@@ -335,6 +341,8 @@ def discard(*args, **kwargs):
     EA - CEA = The crib provides nothing to the pone. Subtract the crib value to determine the best hand to play.
     EA + CEA = We will augment the dealers hand by adding the crib average to the hand average.
 
+    For both the dealer and the pone, you want the hand that generates the largest delta (Δ).
+
     """
 
     ctx = args[0]
@@ -343,18 +351,17 @@ def discard(*args, **kwargs):
 
     click.echo()
 
-
     cards = [Card(*c) for c in kwargs["hand"]]
 
     # do we have duplicate cards?
     duplicates = set(cards)
 
     if len(cards) != 6:
-        click.echo(f'6 Cards are required! Only {len(cards)} found.')
+        click.echo(f"6 Cards are required! Only {len(cards)} found.")
         ctx.abort()
 
     if len(duplicates) < len(cards):
-        click.echo(f'Duplicate Cards are not Allowed!')
+        click.echo(f"Duplicate Cards are not Allowed!")
         ctx.abort()
 
     # --------------
@@ -378,11 +385,15 @@ def discard(*args, **kwargs):
         reverse=True,
     )
 
-    display_discard_results(results_pone, "Processing Pone Hands....", 'delta_pone', dp=3, sp=6)
+    display_discard_results(
+        results_pone, "Processing Pone Hands....", "delta_pone", dp=3, sp=6
+    )
 
     click.echo()
 
-    display_discard_results(results_pone, "Processing Dealer Hands....", 'delta_dealer', dp=3, sp=6)
+    display_discard_results(
+        results_dealer, "Processing Dealer Hands....", "delta_dealer", dp=3, sp=6
+    )
 
     # --------------
     build_end_time = datetime.now().replace(tzinfo=ZoneInfo("America/Toronto"))
