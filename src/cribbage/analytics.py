@@ -37,12 +37,13 @@ from cribbage.cards import (
 # -------------
 
 
-def expected_average(hand, discard=None):
+def expected_average(hand, discard=None, **kwargs):
     """
 
     Given a four card hand, what is the expected average hand value?
-    That is, given the rest of the deck, how much on average is the
-    hand worth with any particular cut card left in the deck.
+
+    That is, given the rest of the deck, how much on average is the hand
+    worth with any particular cut card left in the deck.
 
     <https://en.wikipedia.org/wiki/Expected_value>
 
@@ -72,23 +73,51 @@ def expected_average(hand, discard=None):
           a part of the hand.
         - DEFAULT - None
 
+    # Parameter (kwargs)
+
+    callback:func
+        - A message callback function used to communicate strings back
+          to the caller for writing to STDOUT (or logging or etc...)
+        - DEFAULT - None
+
     # Return
 
-    The average hand value
+    The average hand value.
+
+    If verbose mode is activate a tuple will be returned, the average
+    hand value and the list of hands and cut cards along with the hand
+    value.
 
     """
 
     assert len(hand) == 4
 
-    # Construct a deck of cards less the cards in the hand
+    callback = kwargs.get("callback", None)
+
+    # Construct the deck removing the cards from the hand
     deck = [c for c in make_deck() if c not in hand]
 
+    # Remove discards from the deck
     if discard:
         deck = [c for c in deck if c not in discard]
 
-    total = sum([score_hand(hand, cut) for cut in deck])
+    # total = sum([score_hand(hand, cut) for cut in deck])
 
-    return total / len(deck)
+    # this to implement a callback so we can have verbose mode :(
+    total = 0
+    for i, cut in enumerate(deck):
+
+        value = score_hand(hand, cut)
+        total += value
+
+        if callback:
+
+
+            callback(
+                f"{i:>2}: {', '.join(display_hand(sorted(hand) + [cut], cool=True))} = {value:>2}"
+            )
+
+    return total/len(deck)
 
 
 def _calc_crib_average(pair, discard=None, base_cards=None):
@@ -186,6 +215,13 @@ def discard_consider_all_combos(hand, **kwargs):
     hand:list(Card)
         - The list of cards to determine the best discard
         - Expecting 6 cards.
+
+    # Parameters (kwargs)
+
+    callback:func
+        - A message callback function used to communicate strings back
+          to the caller for writing to STDOUT (or logging or etc...)
+        - DEFAULT - None
 
     # Return
 

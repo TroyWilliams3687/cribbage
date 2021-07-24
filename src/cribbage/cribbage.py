@@ -194,6 +194,11 @@ def score(*args, **kwargs):
     nargs=-1,
     type=str,
 )
+@click.option(
+    "--verbose",
+    is_flag=True,
+    help="Display more information about the process.",
+)
 @click.pass_context
 def average(*args, **kwargs):
     """
@@ -222,7 +227,7 @@ def average(*args, **kwargs):
 
     # Usage
 
-    $ cribbage average 4H 5D 5C 6S
+    $ cribbage average 4H 5D 5C 6S --verbose
 
     Hand = ['4♥', '5♦', '5♣', '6♠']
     Average Value = 15.96
@@ -237,17 +242,24 @@ def average(*args, **kwargs):
     hand = [Card(*c) for c in kwargs["hand"]]
     discard = [Card(*c) for c in kwargs["discard"]]
 
-    hand_average = expected_average(hand, discard)
+
+    click.echo()
+    click.echo(f"Hand = {', '.join(display_hand(hand, cool=True))}")
+
+    if discard:
+        click.echo(f"Discard = {', '.join(display_hand(discard, cool=True))}")
+
+    click.echo()
+
+    cb = write_message if kwargs["verbose"] else None
+
+    hand_average = expected_average(hand, discard, callback=cb)
     hand_value = score_hand(hand, None)
 
     click.echo()
-    click.echo(f"Hand = {display_hand(hand, cool=True)}")
-
-    if discard:
-        click.echo(f"Discard = {display_hand(discard, cool=True)}")
-
     click.echo(f"Value = {hand_value}")
     click.echo(f"Average Value = {hand_average:.3f}")
+    click.echo()
 
 
 def write_message(message):
@@ -270,7 +282,7 @@ def display_discard_results(results, processing_message, delta_key, **kwargs):
     for i, result in enumerate(results, start=1):
 
         message = [
-            f"{i:>2} {display_hand(sorted(result['hand']), cool=True)} ({result['value']}); {display_hand(sorted(result['discard']), cool=True)}",
+            f"{i:>2} {', '.join(display_hand(sorted(result['hand']), cool=True))} ({result['value']}); {', '.join(display_hand(sorted(result['discard']), cool=True))}",
             f"EA = {result['expected_average']:>{sp}.{dp}f}",
             f"CEA = {result['expected_average_crib']:>{sp}.{dp}f}",
             f"Δ = {result[delta_key]:>{sp}.{dp}f}",
@@ -399,3 +411,4 @@ def discard(*args, **kwargs):
     click.echo(f"Started  - {build_start_time}")
     click.echo(f"Finished - {build_end_time}")
     click.echo(f"Elapsed:   {build_end_time - build_start_time}")
+    click.echo()
