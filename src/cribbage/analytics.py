@@ -114,7 +114,7 @@ def expected_average(hand, discard=None, **kwargs):
 
 
             callback(
-                f"{i:>2}: {', '.join(display_hand(sorted(hand) + [cut], cool=True))} = {value:>2}"
+                f"{i:>2}: {display_hand(sorted(hand) + [cut], cool=True, as_string=True)} = {value:>2}"
             )
 
     return total/len(deck)

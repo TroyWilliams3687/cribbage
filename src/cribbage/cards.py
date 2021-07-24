@@ -326,7 +326,12 @@ def make_deck():
     return [Card(*p) for p in product(RANKS, SUITS)]
 
 
-def display_hand(hand, cool=False, super_cool=False):
+def display_hand(
+    hand,
+    cool=False,
+    super_cool=False,
+    **kwargs,
+):
     """
     Given a list of Cards, return a list of strings representing the
     rank and suit of each card.
@@ -345,6 +350,12 @@ def display_hand(hand, cool=False, super_cool=False):
         - if this option is set, will display the 'AS' as 🂱
         - DEFAULT - False
 
+    # Parameters (kwargs)
+
+    as_string:bool
+        - return the hand as a string instead of a list of strings
+        - DEFAULT - False
+
     # Return
 
     A list of strings representing the cards.
@@ -353,11 +364,12 @@ def display_hand(hand, cool=False, super_cool=False):
     """
 
     if cool:
-        return [card.cool_display(display_card=super_cool) for card in hand]
+        result = [card.cool_display(display_card=super_cool) for card in hand]
 
     else:
-        return [str(card) for card in hand]
+        result = [str(card) for card in hand]
 
+    return ', '.join(result) if kwargs.get('as_string', False) else result
 
 def hand_combinations(hand, combination_length=None):
     """
@@ -866,15 +878,16 @@ def score_hand_breakdown(
         total += hand_scores["nibs"]
 
     summary = [
-        f"Hand = {display_hand(hand, cool=(not basic))} Cut = {cut.cool_display(basic=basic)}",
-        "-----------------------",
+        f"Hand = {display_hand(hand, cool=(not basic), as_string=True)}",
+        f"Cut  = {cut.cool_display(basic=basic)}",
+        "------------------",
         f'{len(hands["fifteen"])} Fifteens for {hand_scores["fifteen"]}',
         f'{len(hands["pair"])} Pairs for    {hand_scores["pair"]}',
         f'{len(hands["run"])} Runs for     {hand_scores["run"]}',
         f"Flush for      {flush}",
         f'Nobs for       {hand_scores["nobs"]}',
         f'Nibs for       {hand_scores["nibs"] if include_nibs else 0}',
-        "-----------------------",
+        "------------------",
         f"Total:         {total}",
     ]
 
@@ -883,7 +896,7 @@ def score_hand_breakdown(
         items = ["", "Fifteens:", ""]
 
         for i, f in enumerate(hands["fifteen"], start=1):
-            items.append(f"{i} - {display_hand(f, cool=(not basic))}")
+            items.append(f"{i} - {display_hand(f, cool=(not basic), as_string=True)}")
 
         summary.extend(items)
 
@@ -892,7 +905,7 @@ def score_hand_breakdown(
         items = ["", "Pairs:", ""]
 
         for i, f in enumerate(hands["pair"], start=1):
-            items.append(f"{i}, {display_hand(f, cool=(not basic))}")
+            items.append(f"{i}, {display_hand(f, cool=(not basic), as_string=True)}")
 
         summary.extend(items)
 
@@ -901,7 +914,7 @@ def score_hand_breakdown(
         items = ["", "Runs:", ""]
 
         for i, f in enumerate(hands["run"], start=1):
-            items.append(f"{i} - {display_hand(f, cool=(not basic))}")
+            items.append(f"{i} - {display_hand(f, cool=(not basic), as_string=True)}")
 
         summary.extend(items)
 

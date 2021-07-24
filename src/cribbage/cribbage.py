@@ -85,6 +85,11 @@ def main(*args, **kwargs):
     is_flag=True,
     help="Count the cards assuming this is a dealers hand.",
 )
+@click.option(
+    "--basic",
+    is_flag=True,
+    help="Display the cards using letters for suits instead of symbols (♥,♦,♣,♠)",
+)
 @click.argument(
     "hand",
     nargs=4,
@@ -133,7 +138,7 @@ def score(*args, **kwargs):
 
     # Usage
 
-    $ cribbage score 4H 5D 5C 6S JD
+    $ cribbage score 4H 5D 5C 6S JD --basic
 
     Hand = ['4H', '5D', '6S', '5C'] Cut = JD
     -----------------------
@@ -176,7 +181,7 @@ def score(*args, **kwargs):
         cut,
         include_nibs=kwargs["dealer"],
         five_card_flush=kwargs["crib"],
-        basic=True,
+        basic=kwargs.get('basic', False),
     )
 
     click.echo()
@@ -242,14 +247,11 @@ def average(*args, **kwargs):
     hand = [Card(*c) for c in kwargs["hand"]]
     discard = [Card(*c) for c in kwargs["discard"]]
 
-
     click.echo()
-    click.echo(f"Hand = {', '.join(display_hand(hand, cool=True))}")
+    click.echo(f"Hand = {display_hand(hand, cool=True, as_string=True)}")
 
     if discard:
-        click.echo(f"Discard = {', '.join(display_hand(discard, cool=True))}")
-
-    click.echo()
+        click.echo(f"Discard = {display_hand(discard, cool=True, as_string=True)}")
 
     cb = write_message if kwargs["verbose"] else None
 
@@ -282,7 +284,7 @@ def display_discard_results(results, processing_message, delta_key, **kwargs):
     for i, result in enumerate(results, start=1):
 
         message = [
-            f"{i:>2} {', '.join(display_hand(sorted(result['hand']), cool=True))} ({result['value']}); {', '.join(display_hand(sorted(result['discard']), cool=True))}",
+            f"{i:>2} {display_hand(sorted(result['hand']), cool=True, as_string=True)} ({result['value']}); {display_hand(sorted(result['discard']), cool=True, as_string=True)}",
             f"EA = {result['expected_average']:>{sp}.{dp}f}",
             f"CEA = {result['expected_average_crib']:>{sp}.{dp}f}",
             f"Δ = {result[delta_key]:>{sp}.{dp}f}",
