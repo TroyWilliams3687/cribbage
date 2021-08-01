@@ -23,6 +23,7 @@ Cribbage Scoring - <https://en.wikipedia.org/wiki/Rules_of_cribbage>
 # System Modules - Included with Python
 
 from dataclasses import dataclass
+from operator import methodcaller
 
 from itertools import (
     chain,
@@ -39,6 +40,8 @@ from itertools import (
 
 
 # -------------
+
+
 
 # Shared tuple that stores the card ranks
 RANKS = (
@@ -65,29 +68,6 @@ SUIT_SYMBOLS = {
     "D": "♦",  # u'\u2666',
     "H": "♥",  # u'\u2665',
     "S": "♠",  # u'\u2660',
-}
-
-RANK_SORT = {
-    "A": 1,
-    "2": 2,
-    "3": 3,
-    "4": 4,
-    "5": 5,
-    "6": 6,
-    "7": 7,
-    "8": 8,
-    "9": 9,
-    "T": 11,
-    "J": 12,
-    "Q": 13,
-    "K": 14,
-}
-
-SUIT_SORT = {
-    "H": 0,
-    "D": 100,
-    "S": 200,
-    "C": 300,
 }
 
 
@@ -281,6 +261,86 @@ class Card:
         else:
             return int(self.rank)
 
+    def sort_value(self, component='all', **kwargs):
+        """
+        In most card games, sorting cards is not necessarily based on
+        the face value of the card. This method will define the sort
+        value (i.e. number) for the card so it can be sorted in a way
+        that makes sense for the game.
+
+        Rank:
+        - A = 1
+        - 2 = 2
+        - 3 = 3
+        - 4 = 4
+        - 5 = 5
+        - 6 = 6
+        - 7 = 7
+        - 8 = 8
+        - 9 = 9
+        - T = 11
+        - J = 12
+        - Q = 13
+        - K = 14
+
+        Suit:
+        - H = 0
+        - D = 100
+        - S = 200
+        - C = 300
+
+        # Parameters
+
+        component:str
+            - A string indicting the sort value to return
+            - 'all' - a tuple containing the rank value and the suit value
+            - 'rank' - the rank value
+            - 'suit' - the suit value
+            - if a value is passed that isn't recognized an ValueError is raised
+
+        # NOTE
+
+        If this card object were intended to be used as a generic card,
+        this method should be abstract and implemented in the concrete
+        implementations.
+
+        """
+
+        RANK_SORT = {
+            "A": 1,
+            "2": 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8,
+            "9": 9,
+            "T": 11,
+            "J": 12,
+            "Q": 13,
+            "K": 14,
+        }
+
+        SUIT_SORT = {
+            "H": 0,
+            "D": 100,
+            "S": 200,
+            "C": 300,
+        }
+
+        if component == 'all':
+            return (RANK_SORT[self.rank], SUIT_SORT[self.suit])
+
+        elif component == 'rank':
+            return RANK_SORT[self.rank]
+
+        elif component == 'suit':
+            return SUIT_SORT[self.suit]
+
+        else:
+            raise ValueError(f'component={component} is not a valid option! Choose one of: `all`, `rank` or `suit`.')
+
     def __lt__(self, other):
         """
         Make the item sortable by rank
@@ -294,10 +354,7 @@ class Card:
 
         """
 
-        return (RANK_SORT[self.rank], SUIT_SORT[self.suit]) < (
-            RANK_SORT[other.rank],
-            SUIT_SORT[other.suit],
-        )
+        return self.sort_value() < other.sort_value()
 
     def __str__(self):
         """
@@ -552,9 +609,11 @@ def find_runs(hand):
         # We need to sort the combos, by ranks, otherwise the groupby will not work properly
         # NOTE: Runs/Straights are not dependent on suits
 
+
+
         for k, g in groupby(
-            enumerate(sorted(combo, key=lambda x: RANK_SORT[x.rank])),
-            lambda x: x[0] - RANK_SORT[x[1].rank],
+            enumerate(sorted(combo, key=methodcaller('sort_value', 'rank'))),
+            lambda x: x[0] - x[1].sort_value(component='rank'),
         ):
 
             values = list(g)
@@ -586,7 +645,7 @@ def find_runs(hand):
                 runs.append(candidate)
 
     # Convert the sets to list and sort by rank so we can see the runs
-    return [sorted(list(r), key=lambda x: RANK_SORT[x.rank]) for r in runs]
+    return [sorted(list(r), key=methodcaller('sort_value', 'rank')) for r in runs]
 
 
 def find_flushes(hand, cut):
@@ -628,8 +687,8 @@ def find_flushes(hand, cut):
     # cut card forming a flush?
 
     for k, g in groupby(
-        sorted(hand, key=lambda x: SUIT_SORT[x.suit]),
-        lambda x: SUIT_SORT[x.suit],
+        sorted(hand, key=methodcaller('sort_value', 'suit')),
+        methodcaller('sort_value', 'suit'),
     ):
 
         values = list(g)
