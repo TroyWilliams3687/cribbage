@@ -219,43 +219,6 @@ class Card:
         if self.suit not in SUITS:
             raise ValueError(f"INVALID Suit ({self.suit})! Must be one of: {SUITS}!")
 
-    def value(self) -> int:
-        """
-        Given a card, return the face value it is worth in a cribbage game.
-
-        - A = 1
-        - 2 = 2
-        - 3 = 3
-        - 4 = 4
-        - 5 = 5
-        - 6 = 6
-        - 7 = 7
-        - 8 = 8
-        - 9 = 9
-        - T = 10
-        - J = 10
-        - Q = 10
-        - K = 10
-
-        # Return
-
-        An integer representing the point value of the card
-
-        """
-
-        # NOTE: We could probably rewrite this as a lookup dictionary.
-        # That might be clearer and contain the point/value rules in one
-        # place
-
-        if self.rank == "A":
-            return 1
-
-        elif self.rank in ("T", "J", "Q", "K"):
-            return 10
-
-        else:
-            return int(self.rank)
-
     def cool_display(self, display_card=False, **kwargs) -> str:
         """
 
@@ -278,6 +241,45 @@ class Card:
         else:
 
             return self.rank + SUIT_SYMBOLS[self.suit]
+
+    def face_value(self) -> int:
+        """
+        Given a card, return the face value it is worth in a cribbage game.
+
+        - A = 1
+        - 2 = 2
+        - 3 = 3
+        - 4 = 4
+        - 5 = 5
+        - 6 = 6
+        - 7 = 7
+        - 8 = 8
+        - 9 = 9
+        - T = 10
+        - J = 10
+        - Q = 10
+        - K = 10
+
+        # Return
+
+        An integer representing the point value of the card
+
+        # NOTE
+
+        If this card object were intended to be used as a generic card,
+        this method should be abstract and implemented in the concrete
+        implementations.
+
+        """
+
+        if self.rank == "A":
+            return 1
+
+        elif self.rank in ("T", "J", "Q", "K"):
+            return 10
+
+        else:
+            return int(self.rank)
 
     def __lt__(self, other):
         """
@@ -471,7 +473,7 @@ def find_fifteens(hand):
 
     """
     for combo in hand_combinations(hand):
-        if sum([card.value() for card in combo]) == 15:
+        if sum([card.face_value() for card in combo]) == 15:
             yield combo
 
 

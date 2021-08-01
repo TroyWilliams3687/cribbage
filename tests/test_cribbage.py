@@ -99,7 +99,7 @@ def test_card_value(data):
 
     c = Card(*left)
 
-    assert c.value() == right
+    assert c.face_value() == right
 
 
 # -------------
