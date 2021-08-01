@@ -19,6 +19,7 @@
 
 from zoneinfo import ZoneInfo
 from datetime import datetime
+from operator import itemgetter
 
 # ------------
 # 3rd Party - From pip
@@ -387,7 +388,7 @@ def discard(*args, **kwargs):
 
     results_pone = sorted(
         results,
-        key=lambda x: x["delta_pone"],
+        key=itemgetter('delta_pone'), #lambda x: x["delta_pone"],
         reverse=True,
     )
 
@@ -398,7 +399,7 @@ def discard(*args, **kwargs):
 
     results_dealer = sorted(
         results,
-        key=lambda x: x["delta_dealer"],
+        key=itemgetter('delta_dealer'), #lambda x: x["delta_dealer"],
         reverse=True,
     )
 
